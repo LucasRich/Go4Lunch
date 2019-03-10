@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group>
+
+        <item
+            android:id="@+id/activity_main_drawer_top_stories"
+            android:icon="@drawable/ic_map_black_18dp"
+            android:title="YOUR LUNCH" />
+        <item
+            android:id="@+id/activity_main_drawer_most_popular"
+            android:icon="@drawable/ic_map_black_18dp"
+            android:title="SETTING" />
+        <item
+            android:id="@+id/activity_main_drawer_movie_reviews"
+            android:icon="@drawable/ic_map_black_18dp"
+            android:title="LOGOUT" />
+    </group>
+
+</menu>

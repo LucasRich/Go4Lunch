@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Go4Lunch</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- BOTTOM NAVIGATION VIEW -->
+    <string name="bottom_navigation_menu_landscape">Workmates</string>
+    <string name="bottom_navigation_menu_logos">List View</string>
+    <string name="bottom_navigation_menu_android">Map View</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="popup_title_permission_location_access">Access location</string>
+
+</resources>
