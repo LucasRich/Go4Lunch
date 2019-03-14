@@ -20,6 +20,7 @@ import com.lucas.go4lunch.Controllers.Fragments.ListViewFragment;
 import com.lucas.go4lunch.Controllers.Fragments.MapViewFragment;
 import com.lucas.go4lunch.Controllers.Fragments.WorkmatesFragment;
 import com.lucas.go4lunch.R;
+import com.lucas.go4lunch.Utils.UtilsSingleton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static Context contextOfApplication;
 
+    UtilsSingleton utils = UtilsSingleton.getInstance();
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -177,4 +179,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.replace(R.id.activity_main_frame_layout, fragment);
         transaction.commit();
     }
+
+    public static Context getContextOfApplication(){
+        return contextOfApplication;
+    }
+
 }
