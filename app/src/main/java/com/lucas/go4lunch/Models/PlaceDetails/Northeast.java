@@ -1,4 +1,4 @@
-package com.lucas.go4lunch.Models.NearbySearch;
+package com.lucas.go4lunch.Models.PlaceDetails;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

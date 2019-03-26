@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class NearbySearch {
+
     @SerializedName("results")
     @Expose
     private List<Result> results = null;

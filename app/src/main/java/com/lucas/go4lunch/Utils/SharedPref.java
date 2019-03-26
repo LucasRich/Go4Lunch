@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.lucas.go4lunch.Controllers.Activities.MainActivity;
+import com.lucas.go4lunch.Models.PlaceDetails.Location;
 
 public class SharedPref {
 
     private static SharedPreferences mSharedPref;
-    public static String currentPostiton = "";
-
-    static Context applicationContext = MainActivity.getContextOfApplication();
-
+    public static String currentPositionLat = "currentPositionLat";
+    public static String currentPositionLng = "currentPositionLng";
 
     private SharedPref() { }
 
@@ -47,6 +46,12 @@ public class SharedPref {
 
     public static void write(String key, Integer value) {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
-        prefsEditor.putInt(key, value).commit();
+        prefsEditor.putInt(key, value);
+        prefsEditor.commit();
+    }
+
+    public static String getCurrentPosition () {
+        String result = SharedPref.read(currentPositionLat, "") + "," + SharedPref.read(currentPositionLng, "");
+        return result;
     }
 }

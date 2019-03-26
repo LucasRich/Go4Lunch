@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <!-- IMAGE LAYOUT -->
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.7">
+
+    <ImageView
+        android:id="@+id/img_restaurant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/img_test"
+        />
+
+        <!--
+        <include
+        layout="@layout/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
+        -->
+
+</RelativeLayout>
+
+<!-- HEADER, BUTTON LAYOUT, RECYCLER VIEW -->
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <!-- HEADER -->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/header_restaurant"
+            android:background="@color/colorPrimary">
+
+            <TextView
+                android:id="@+id/name_restaurant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="20dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:text=""
+                />
+
+            <TextView
+                android:id="@+id/adress_restaurant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/name_restaurant"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="12dp"
+                android:textColor="@android:color/white"
+                android:text=""
+                />
+
+        </RelativeLayout>
+
+        <!-- BUTTON LAYOUT -->
+
+        <LinearLayout
+            android:id="@+id/btn_view"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/header_restaurant">
+
+            <!-- CALL LAYOUT -->
+
+            <RelativeLayout
+                android:id="@+id/call_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                >
+
+                <ImageView
+                    android:id="@+id/call_black"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_call_black_48dp"
+                    android:tint="@color/colorPrimary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/call_black"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="bold"
+                    android:textSize="17dp"
+                    android:textColor="@color/colorPrimary"
+                    android:text="CALL" />
+
+            </RelativeLayout>
+
+            <!-- LIKE LAYOUT -->
+
+            <RelativeLayout
+                android:id="@+id/like_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                >
+
+                <ImageView
+                    android:id="@+id/like"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_star_rate_black_48dp"
+                    android:tint="@color/colorPrimary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/like"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="bold"
+                    android:textSize="17dp"
+                    android:textColor="@color/colorPrimary"
+                    android:text="LIKE" />
+
+            </RelativeLayout>
+
+            <!-- WEBSITE LAYOUT -->
+
+            <RelativeLayout
+                android:id="@+id/website_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                >
+
+                <ImageView
+                    android:id="@+id/website"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_language_black_48dp"
+                    android:tint="@color/colorPrimary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/website"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="bold"
+                    android:textSize="17dp"
+                    android:textColor="@color/colorPrimary"
+                    android:text="WEBSITE" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <!-- RECYCLER VIEW -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btn_view"
+        >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/greyWhite"/>
+    </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

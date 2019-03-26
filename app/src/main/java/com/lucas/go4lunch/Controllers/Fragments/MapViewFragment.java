@@ -1,20 +1,13 @@
 package com.lucas.go4lunch.Controllers.Fragments;
 
-
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,15 +16,13 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.lucas.go4lunch.Models.NearbySearch.NearbySearch;
-import com.lucas.go4lunch.Models.NearbySearch.Result;
+import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
+import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
@@ -47,18 +38,12 @@ import io.reactivex.observers.DisposableObserver;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static android.support.v4.content.ContextCompat.getSystemService;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class MapViewFragment extends Fragment
-        implements com.google.android.gms.location.LocationListener {
+        implements com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
     @BindView(R.id.myLocationButton) FloatingActionButton myLocationBtn;
     @BindView(R.id.mapView) MapView mMapView;
-
-    UtilsSingleton utils = UtilsSingleton.getInstance();
 
     private static final String PERMS = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final int LOCATION_PERMS = 100;
@@ -67,37 +52,34 @@ public class MapViewFragment extends Fragment
     private LocationManager mLocationManager;
     private Disposable disposable;
 
+    List <PlaceDetails> restaurant;
+
     private LatLng currentPostion;
-    private List<NearbySearch> restaurant;
+    Marker mMarker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map_view, container, false);
         ButterKnife.bind(this, rootView);
         SharedPref.init(getContext());
+
         executeHttpRequestWithRetrofit();
 
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
 
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mMap = googleMap;
-                askPermissionsAndShowMyLocation();
-                getCurrentLocationAndZoomOn();
-            }
-        });
+        mMapView.getMapAsync(this);
 
         return rootView;
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        askPermissionsAndShowMyLocation();
+        getCurrentLocationAndZoomOn();
+        mMap.setOnMarkerClickListener(this);
+    }
 
     // --------------------
     // ACTIONS
@@ -106,13 +88,22 @@ public class MapViewFragment extends Fragment
     @OnClick(R.id.myLocationButton)
     public void onClickLocationButton(){
         getCurrentLocationAndZoomOn();
+        executeHttpRequestWithRetrofit();
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker mMarker) {
+        if (mMarker.equals(mMarker))
+            launchDisplayRestaurantInfo(mMarker.getTitle());
+            mMarker.hideInfoWindow();
+        return true;
     }
 
     // --------------------
     // CURRENT LOCATION
     // --------------------
 
-    private void getcurrentLocation () {
+    private void getCurrentLocation () {
         Criteria criteria = new Criteria();
         mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
         String provider = mLocationManager.getBestProvider(criteria, true);
@@ -124,11 +115,12 @@ public class MapViewFragment extends Fragment
         Location location = mLocationManager.getLastKnownLocation(provider);
         currentPostion = new LatLng(location.getLatitude(), location.getLongitude());
 
-        SharedPref.write(SharedPref.currentPostiton, location.getLatitude() + "," + location.getLongitude());
+        SharedPref.write(SharedPref.currentPositionLat, location.getLatitude() + "");
+        SharedPref.write(SharedPref.currentPositionLng, location.getLongitude() + "");
     }
 
     private void getCurrentLocationAndZoomOn () {
-        getcurrentLocation();
+        getCurrentLocation();
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(currentPostion)
@@ -167,47 +159,45 @@ public class MapViewFragment extends Fragment
     // -------------------
 
     private void executeHttpRequestWithRetrofit(){
-        this.disposable = PlaceStreams.streamFetchNearbySearch(SharedPref.read(SharedPref.currentPostiton, ""))
-                .subscribeWith(new DisposableObserver<NearbySearch>(){
+        this.disposable = PlaceStreams.streamFetchPlaceIdAndFetchDetails(SharedPref.getCurrentPosition())
+                .subscribeWith(new DisposableObserver<PlaceDetails>(){
                     @Override
-                    public void onNext(NearbySearch response) {
+                    public void onNext(PlaceDetails response) {
                         Log.e("TAG","On Next");
 
-                        List<Result> dlRestaurant = response.getResults();
-                        String title;
-
-                        for (Result restaurant : dlRestaurant){
-
-                            if (restaurant.getName() != null){
-                                title = restaurant.getName();
-                            }
-                            else {
-                                title = "Unknow";
-                            }
-
-                            LatLng latLngRestaurant = new LatLng(restaurant.getGeometry().getLocation().getLat(),
-                                    restaurant.getGeometry().getLocation().getLng());
-
-                            mMap.addMarker(new MarkerOptions().position(latLngRestaurant)
-                                    .title(title));
-                        }
+                        mMarker = mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(response.getResult().getGeometry().getLocation().getLat(),
+                                        response.getResult().getGeometry().getLocation().getLng()))
+                                .title(response.getResult().getPlaceId()));
                     }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("TAG","On Error"+Log.getStackTraceString(e));
-                    }
+                    @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
 
-                    @Override
-                    public void onComplete() {
-                        Log.e("TAG","On Complete !!");
-                    }
+                    @Override public void onComplete() { Log.e("TAG","On Complete !!"); }
                 });
     }
 
     private void disposeWhenDestroy(){
         if (this.disposable != null && !this.disposable.isDisposed()) this.disposable.dispose();
     }
+
+    // -------------------
+    // LAUNCH
+    // -------------------
+
+    private void launchDisplayRestaurantInfo(String placeId){
+        Intent myIntent = new Intent(getActivity(), DisplayRestaurantInfo.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("placeId", placeId);
+
+        myIntent.putExtras(bundle);
+        this.startActivity(myIntent);
+    }
+
+    // -------------------
+    // LIFE CYCLE
+    // -------------------
 
     @Override
     public void onResume() {
@@ -225,6 +215,7 @@ public class MapViewFragment extends Fragment
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+        this.disposeWhenDestroy();
     }
 
     @Override
