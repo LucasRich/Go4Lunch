@@ -15,6 +15,8 @@ import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
 
+import java.text.DecimalFormat;
+
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +43,10 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
     private Location currentLocation = new Location("");
     private Location restaurantLocation = new Location("");
 
+    // -------------------
+    // INIT
+    // -------------------
+
     public listViewViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -51,8 +57,11 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
         this.executeHttpRequestWithRetrofit(response.getPlaceId());
     }
 
-    private void executeHttpRequestWithRetrofit(String placeId){
+    // -------------------
+    // HTTP (RxJAVA)
+    // -------------------
 
+    private void executeHttpRequestWithRetrofit(String placeId){
         this.disposable = PlaceStreams.streamFetchPlaceDetails(placeId)
                 .subscribeWith(new DisposableObserver<PlaceDetails>(){
                     @Override
@@ -86,46 +95,76 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
                             rate = response.getResult().getRating().intValue();
                         }
 
-                        switch(rate) {
-                            case 0:
-                                oneStar.setVisibility(itemView.INVISIBLE);
-                                twoStars.setVisibility(itemView.INVISIBLE);
-                                threeStars.setVisibility(itemView.INVISIBLE);
-                                fourStars.setVisibility(itemView.INVISIBLE);
-                                fiveStars.setVisibility(itemView.INVISIBLE);
-                                break;
-                            case 1:
-                                twoStars.setVisibility(itemView.INVISIBLE);
-                                threeStars.setVisibility(itemView.INVISIBLE);
-                                fourStars.setVisibility(itemView.INVISIBLE);
-                                fiveStars.setVisibility(itemView.INVISIBLE);
-                                break;
-                            case 2:
-                                threeStars.setVisibility(itemView.INVISIBLE);
-                                fourStars.setVisibility(itemView.INVISIBLE);
-                                fiveStars.setVisibility(itemView.INVISIBLE);
-                                break;
-                            case 3:
-                                fourStars.setVisibility(itemView.INVISIBLE);
-                                fiveStars.setVisibility(itemView.INVISIBLE);
-                                break;
-                            case 4:
-                                fiveStars.setVisibility(itemView.INVISIBLE);
-                                break;
-                        }
-
-                        currentLocation.setLatitude(Double.valueOf(SharedPref.read(SharedPref.currentPositionLat, "")));
-                        currentLocation.setLongitude(Double.valueOf(SharedPref.read(SharedPref.currentPositionLng, "")));
-
-                        restaurantLocation.setLatitude(response.getResult().getGeometry().getLocation().getLat());
-                        restaurantLocation.setLongitude(response.getResult().getGeometry().getLocation().getLng());
-
-                        restaurantDistance.setText(Math.round(currentLocation.distanceTo(restaurantLocation)) + "m");
+                        displayStars(rate);
+                        displayDistance(response.getResult().getGeometry().getLocation().getLat(),
+                                        response.getResult().getGeometry().getLocation().getLng());
                     }
 
                     @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
 
                     @Override public void onComplete() { Log.e("TAG","On Complete !!"); }
                 });
+    }
+
+    private void disposeWhenDestroy(){
+        if (this.disposable != null && !this.disposable.isDisposed()) this.disposable.dispose();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        this.disposeWhenDestroy();
+    }
+
+    // -------------------
+    // UTILS
+    // -------------------
+
+    private void displayStars (int rate){
+        switch(rate) {
+            case 0:
+                oneStar.setVisibility(itemView.INVISIBLE);
+                twoStars.setVisibility(itemView.INVISIBLE);
+                threeStars.setVisibility(itemView.INVISIBLE);
+                fourStars.setVisibility(itemView.INVISIBLE);
+                fiveStars.setVisibility(itemView.INVISIBLE);
+                break;
+            case 1:
+                twoStars.setVisibility(itemView.INVISIBLE);
+                threeStars.setVisibility(itemView.INVISIBLE);
+                fourStars.setVisibility(itemView.INVISIBLE);
+                fiveStars.setVisibility(itemView.INVISIBLE);
+                break;
+            case 2:
+                threeStars.setVisibility(itemView.INVISIBLE);
+                fourStars.setVisibility(itemView.INVISIBLE);
+                fiveStars.setVisibility(itemView.INVISIBLE);
+                break;
+            case 3:
+                fourStars.setVisibility(itemView.INVISIBLE);
+                fiveStars.setVisibility(itemView.INVISIBLE);
+                break;
+            case 4:
+                fiveStars.setVisibility(itemView.INVISIBLE);
+                break;
+        }
+    }
+
+    private void displayDistance (double latitude, double longitude){
+        currentLocation.setLatitude(Double.valueOf(SharedPref.read(SharedPref.currentPositionLat, "")));
+        currentLocation.setLongitude(Double.valueOf(SharedPref.read(SharedPref.currentPositionLng, "")));
+
+        restaurantLocation.setLatitude(latitude);
+        restaurantLocation.setLongitude(longitude);
+
+        int distance = Math.round(currentLocation.distanceTo(restaurantLocation));
+        DecimalFormat myFormatter = new DecimalFormat("#,###");
+
+        if (distance < 1000){
+            restaurantDistance.setText(distance + "m");
+        }
+        else {
+            restaurantDistance.setText(myFormatter.format(distance) + "km");
+        }
     }
 }

@@ -24,11 +24,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.R;
+import com.lucas.go4lunch.Utils.Constant;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
-import com.lucas.go4lunch.Utils.UtilsSingleton;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,10 +49,7 @@ public class MapViewFragment extends Fragment
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     private Disposable disposable;
-
-    List <PlaceDetails> restaurant;
-
-    private LatLng currentPostion;
+    private LatLng currentPosition;
     Marker mMarker;
 
     @Override
@@ -113,7 +108,7 @@ public class MapViewFragment extends Fragment
             return;
         }
         Location location = mLocationManager.getLastKnownLocation(provider);
-        currentPostion = new LatLng(location.getLatitude(), location.getLongitude());
+        currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
         SharedPref.write(SharedPref.currentPositionLat, location.getLatitude() + "");
         SharedPref.write(SharedPref.currentPositionLng, location.getLongitude() + "");
@@ -123,7 +118,7 @@ public class MapViewFragment extends Fragment
         getCurrentLocation();
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(currentPostion)
+                .target(currentPosition)
                 .zoom(17)
                 .build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -189,7 +184,7 @@ public class MapViewFragment extends Fragment
         Intent myIntent = new Intent(getActivity(), DisplayRestaurantInfo.class);
 
         Bundle bundle = new Bundle();
-        bundle.putString("placeId", placeId);
+        bundle.putString(Constant.bundleKeyPlaceId, placeId);
 
         myIntent.putExtras(bundle);
         this.startActivity(myIntent);

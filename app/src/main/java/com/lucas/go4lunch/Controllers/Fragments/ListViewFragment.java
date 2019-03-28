@@ -1,6 +1,5 @@
 package com.lucas.go4lunch.Controllers.Fragments;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -18,11 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
+import com.lucas.go4lunch.Utils.Constant;
+import com.lucas.go4lunch.Utils.PlaceDetailSingleton;
 import com.lucas.mynews.Utils.ItemClickSupport;
 
 import com.lucas.go4lunch.Models.NearbySearch.NearbySearch;
 import com.lucas.go4lunch.Models.NearbySearch.Result;
-import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
@@ -73,7 +73,7 @@ public class ListViewFragment extends Fragment {
                     Intent myIntent = new Intent(getActivity(), DisplayRestaurantInfo.class);
                     Bundle bundle = new Bundle();
 
-                    bundle.putString("placeId", response.getPlaceId());
+                    bundle.putString(Constant.bundleKeyPlaceId, response.getPlaceId());
 
                     myIntent.putExtras(bundle);
                     startActivity(myIntent);
@@ -88,7 +88,7 @@ public class ListViewFragment extends Fragment {
     // HTTP (RxJAVA)
     // -------------------
 
-    protected void executeHttpRequestWithRetrofit(){
+    private void executeHttpRequestWithRetrofit(){
         this.disposable = PlaceStreams.streamFetchNearbySearch(SharedPref.getCurrentPosition())
                 .subscribeWith(new DisposableObserver<NearbySearch>(){
                     @Override

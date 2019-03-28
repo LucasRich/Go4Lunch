@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 
 public interface PlaceService {
 
-    @GET("nearbysearch/json?&radius=300&type=restaurant&key=AIzaSyBWZx1xMJnhvXntblI-fLoNmZY64Gu2deY")
+    @GET("nearbysearch/json?&radius=1500&type=restaurant&key=AIzaSyBWZx1xMJnhvXntblI-fLoNmZY64Gu2deY")
     Observable<NearbySearch> getNearbySearch(@Query("location") String location);
 
     @GET("details/json?&key=AIzaSyBWZx1xMJnhvXntblI-fLoNmZY64Gu2deY")

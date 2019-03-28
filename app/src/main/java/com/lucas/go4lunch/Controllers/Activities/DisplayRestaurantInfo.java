@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.R;
+import com.lucas.go4lunch.Utils.Constant;
+import com.lucas.go4lunch.Utils.PlaceDetailSingleton;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 
 import java.net.URLEncoder;
@@ -33,12 +35,22 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
 
     @BindView(R.id.img_restaurant) ImageView imgRestaurant;
     @BindView(R.id.name_restaurant) TextView nameRestaurant;
-    @BindView(R.id.adress_restaurant) TextView adressRestaurant;
+    @BindView(R.id.adress_restaurant) TextView adresseRestaurant;
+    @BindView(R.id.item_5_stars) ImageView fiveStars;
+    @BindView(R.id.item_4_stars) ImageView fourStars;
+    @BindView(R.id.item_3_stars) ImageView threeStars;
+    @BindView(R.id.item_2_stars) ImageView twoStars;
+    @BindView(R.id.item_1_star) ImageView oneStar;
+
+    PlaceDetailSingleton utils = PlaceDetailSingleton.getInstance();
+
+    private View view;
 
     private Disposable disposable;
     private String phone_number;
     private String restaurantUrl;
     private String webSite;
+    private int rate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +99,7 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
 
     private void executeHttpRequestWithRetrofit(){
         Bundle bundle = getIntent().getExtras();
-        String placeId = bundle.getString("placeId", "");
+        String placeId = bundle.getString(Constant.bundleKeyPlaceId, "");
 
         this.disposable = PlaceStreams.streamFetchPlaceDetails(placeId)
                 .subscribeWith(new DisposableObserver<PlaceDetails>(){
@@ -96,7 +108,7 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
                         Log.e("TAG","On Next");
 
                         nameRestaurant.setText(response.getResult().getName());
-                        adressRestaurant.setText(response.getResult().getTypes().get(0) + " - " + response.getResult().getVicinity());
+                        adresseRestaurant.setText(response.getResult().getTypes().get(0) + " - " + response.getResult().getVicinity());
 
                         if (response.getResult().getPhotos() != null){
                             String imageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=" +
@@ -121,6 +133,12 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
                         else { webSite = null; }
 
                         restaurantUrl = response.getResult().getUrl();
+
+                        if (response.getResult().getRating() != null){
+                            rate = response.getResult().getRating().intValue();
+                        }
+
+                        displayStars(rate);
                     }
 
                     @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
@@ -142,6 +160,36 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
     // -------------------
     // UTILS
     // -------------------
+
+    private void displayStars (int rate){
+        switch(rate) {
+            case 0:
+                oneStar.setVisibility(view.INVISIBLE);
+                twoStars.setVisibility(view.INVISIBLE);
+                threeStars.setVisibility(view.INVISIBLE);
+                fourStars.setVisibility(view.INVISIBLE);
+                fiveStars.setVisibility(view.INVISIBLE);
+                break;
+            case 1:
+                twoStars.setVisibility(view.INVISIBLE);
+                threeStars.setVisibility(view.INVISIBLE);
+                fourStars.setVisibility(view.INVISIBLE);
+                fiveStars.setVisibility(view.INVISIBLE);
+                break;
+            case 2:
+                threeStars.setVisibility(view.INVISIBLE);
+                fourStars.setVisibility(view.INVISIBLE);
+                fiveStars.setVisibility(view.INVISIBLE);
+                break;
+            case 3:
+                fourStars.setVisibility(view.INVISIBLE);
+                fiveStars.setVisibility(view.INVISIBLE);
+                break;
+            case 4:
+                fiveStars.setVisibility(view.INVISIBLE);
+                break;
+        }
+    }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
         if (drawable instanceof BitmapDrawable) {
