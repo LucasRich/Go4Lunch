@@ -13,9 +13,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class PlaceStreams {
 
-    public static Observable<NearbySearch> streamFetchNearbySearch(String location){
+    public static Observable<NearbySearch> streamFetchNearbySearch(String location, int radius){
         PlaceService placeService = PlaceService.retrofit.create(PlaceService.class);
-        return placeService.getNearbySearch(location)
+        return placeService.getNearbySearch(location, radius)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .timeout(10, TimeUnit.SECONDS);
@@ -29,19 +29,9 @@ public class PlaceStreams {
                 .timeout(10, TimeUnit.SECONDS);
     }
 
-    public static Observable<PlaceDetails> streamFetchPlaceIdAndFetchDetails(String location){
-        return streamFetchNearbySearch(location)
-                .concatMapIterable(new Function<NearbySearch, Iterable<Result>>() {
-                    @Override
-                    public Iterable<Result> apply(NearbySearch results) {
-                        return results.getResults();
-                    }
-                })
-                .concatMap(new Function<Result, Observable<PlaceDetails>>() {
-                    @Override
-                    public Observable<PlaceDetails> apply(Result result) {
-                        return streamFetchPlaceDetails(result.getPlaceId());
-                    }
-                });
+    public static Observable<PlaceDetails> streamFetchPlaceIdAndFetchDetails(String location, int radius){
+        return streamFetchNearbySearch(location, radius)
+                .concatMapIterable((Function<NearbySearch, Iterable<Result>>) NearbySearch::getResults)
+                .concatMap((Function<Result, Observable<PlaceDetails>>) result -> streamFetchPlaceDetails(result.getPlaceId()));
     }
 }

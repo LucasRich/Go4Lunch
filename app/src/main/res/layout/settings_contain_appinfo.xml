@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- TITTLE -->
+
+    <TextView
+        android:id="@+id/settings_title_appinfoSetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="@android:color/black"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:text="APP INFORMATION"/>
+
+    <!-- UPDATE NOTE VIEW -->
+
+    <RelativeLayout
+        android:id="@+id/updateNote_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settings_title_appinfoSetting"
+        android:padding="15dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/img_updateNote"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_perm_device_information_black_48dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/img_updateNote"
+            android:textSize="17dp"
+            android:textColor="@android:color/black"
+            android:text="Update note"/>
+
+    </RelativeLayout>
+
+    <!-- SUPPORT VIEW -->
+
+    <RelativeLayout
+        android:id="@+id/support_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/updateNote_view"
+        android:padding="15dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/img_support"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_contact_support_black_48dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/img_support"
+            android:textSize="17dp"
+            android:textColor="@android:color/black"
+            android:text="Support"/>
+
+    </RelativeLayout>
+
+    <!-- ABOUT ACCOUNT -->
+
+    <RelativeLayout
+        android:id="@+id/about_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/support_view"
+        android:padding="15dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/img_about"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_info_black_48dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/img_about"
+            android:textSize="17dp"
+            android:textColor="@android:color/black"
+            android:text="About"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

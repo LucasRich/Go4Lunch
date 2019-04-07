@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.Constant;
@@ -25,6 +27,7 @@ import com.lucas.go4lunch.Utils.PlaceStreams;
 
 import java.net.URLEncoder;
 
+import androidx.core.graphics.drawable.DrawableCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,10 +44,7 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
     @BindView(R.id.item_3_stars) ImageView threeStars;
     @BindView(R.id.item_2_stars) ImageView twoStars;
     @BindView(R.id.item_1_star) ImageView oneStar;
-
-    PlaceDetailSingleton utils = PlaceDetailSingleton.getInstance();
-
-    private View view;
+    @BindView(R.id.restaurantChoiceFab) FloatingActionButton restaurantChoiceFab;
 
     private Disposable disposable;
     private String phone_number;
@@ -93,6 +93,11 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
 
     }
 
+    @OnClick(R.id.restaurantChoiceFab)
+    public void onClickRestaurantChoiceFab(){
+
+    }
+
     // -------------------
     // HTTP (RxJAVA)
     // -------------------
@@ -113,13 +118,13 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
                         if (response.getResult().getPhotos() != null){
                             String imageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=" +
                                                 response.getResult().getPhotos().get(0).getPhotoReference() +
-                                                    "&key=AIzaSyBWZx1xMJnhvXntblI-fLoNmZY64Gu2deY";
+                                                    "&key=AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE";
 
                             Glide.with(getApplicationContext()).load(imageUrl).into(imgRestaurant);
                         }
                         else {
-                            Glide.with(getApplicationContext()).load("https://upload.wikimedia.org/wikipedia/commons/thumb/" +
-                                    "a/ac/No_image_available.svg/1024px-No_image_available.svg.png").into(imgRestaurant);
+                            Glide.with(getApplicationContext()).load("https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/" +
+                                    "600px-No_image_available_600_x_450.svg.png").into(imgRestaurant);
                         }
 
                         if (response.getResult().getFormattedPhoneNumber() != null){
@@ -139,6 +144,7 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
                         }
 
                         displayStars(rate);
+                        System.out.println(placeId);
                     }
 
                     @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
@@ -164,43 +170,30 @@ public class DisplayRestaurantInfo extends AppCompatActivity {
     private void displayStars (int rate){
         switch(rate) {
             case 0:
-                oneStar.setVisibility(view.INVISIBLE);
-                twoStars.setVisibility(view.INVISIBLE);
-                threeStars.setVisibility(view.INVISIBLE);
-                fourStars.setVisibility(view.INVISIBLE);
-                fiveStars.setVisibility(view.INVISIBLE);
+                oneStar.setVisibility(View.INVISIBLE);
+                twoStars.setVisibility(View.INVISIBLE);
+                threeStars.setVisibility(View.INVISIBLE);
+                fourStars.setVisibility(View.INVISIBLE);
+                fiveStars.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                twoStars.setVisibility(view.INVISIBLE);
-                threeStars.setVisibility(view.INVISIBLE);
-                fourStars.setVisibility(view.INVISIBLE);
-                fiveStars.setVisibility(view.INVISIBLE);
+                twoStars.setVisibility(View.INVISIBLE);
+                threeStars.setVisibility(View.INVISIBLE);
+                fourStars.setVisibility(View.INVISIBLE);
+                fiveStars.setVisibility(View.INVISIBLE);
                 break;
             case 2:
-                threeStars.setVisibility(view.INVISIBLE);
-                fourStars.setVisibility(view.INVISIBLE);
-                fiveStars.setVisibility(view.INVISIBLE);
+                threeStars.setVisibility(View.INVISIBLE);
+                fourStars.setVisibility(View.INVISIBLE);
+                fiveStars.setVisibility(View.INVISIBLE);
                 break;
             case 3:
-                fourStars.setVisibility(view.INVISIBLE);
-                fiveStars.setVisibility(view.INVISIBLE);
+                fourStars.setVisibility(View.INVISIBLE);
+                fiveStars.setVisibility(View.INVISIBLE);
                 break;
             case 4:
-                fiveStars.setVisibility(view.INVISIBLE);
+                fiveStars.setVisibility(View.INVISIBLE);
                 break;
         }
-    }
-
-    public static Bitmap drawableToBitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable)drawable).getBitmap();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
     }
 }

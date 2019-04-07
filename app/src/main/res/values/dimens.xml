@@ -5,4 +5,10 @@
     <dimen name="design_fab_size_mini" tools:override="true">76dp</dimen>
     <dimen name="design_fab_content_size" tools:override="true">70dp</dimen>
 
+    <dimen name="default_large_margin">20dip</dimen>
+    <dimen name="default_margin">10dip</dimen>
+    <dimen name="default_title_size">60sp</dimen>
+    <dimen name="default_text_size">13sp</dimen>
+    <dimen name="default_text_size_mini">8sp</dimen>
+
 </resources>

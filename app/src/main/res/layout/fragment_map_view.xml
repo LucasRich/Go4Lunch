@@ -21,7 +21,7 @@
         app:elevation="10dp"
         app:pressedTranslationZ="12dp"
         app:fabSize="normal"
-        android:backgroundTint="@color/greyWhite"
+        android:backgroundTint="@color/white"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         />

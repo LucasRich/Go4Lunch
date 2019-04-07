@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,20 +16,31 @@
         android:background="@drawable/color_shadow_white"
         >
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item_cardView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginTop="5dp"
+            app:cardCornerRadius="2dp"
+            android:layout_alignParentRight="true"
+            >
+
         <ImageView
             android:id="@+id/item_img"
             android:layout_width="120dp"
             android:layout_height="80dp"
-            android:layout_margin="10dp"
             android:src="@drawable/img_test"
-            android:layout_alignParentRight="true"
+            android:scaleType="centerCrop"
             />
+
+        </androidx.cardview.widget.CardView>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="120dp"
             android:layout_weight="1"
-            android:layout_toLeftOf="@+id/item_img"
+            android:layout_toLeftOf="@+id/item_cardView"
             android:layout_marginTop="10dp"
             >
 
@@ -107,7 +119,7 @@
             layout="@layout/stars_rate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/item_img"
+            android:layout_below="@+id/item_cardView"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             />

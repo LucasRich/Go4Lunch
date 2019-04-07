@@ -5,20 +5,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="1">
-
-        <!-- IMAGE LAYOUT -->
+        android:layout_weight="1"
+        >
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/restaurantChoiceFab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="60dp"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/ic_check_circle_black_48dp"
+                    android:tint="@android:color/holo_green_light"
+                    app:maxImageSize="40dp"
+                    app:borderWidth="0dp"
+                    app:elevation="10dp"
+                    app:pressedTranslationZ="12dp"
+                    app:fabSize="mini"
+                    android:backgroundTint="@color/white"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    />
 
         <RelativeLayout
+            android:id="@+id/img_layout"
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1.7">
+            android:layout_above="@+id/header_restaurant"
+            >
 
             <ImageView
                 android:id="@+id/img_restaurant"
@@ -29,6 +47,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentBottom="true"
                 android:src="@drawable/img_test"
+                android:scaleType="centerCrop"
                 />
 
             <!--
@@ -48,7 +67,9 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:id="@+id/header_restaurant"
-            android:background="@color/colorPrimary">
+            android:background="@color/colorPrimary"
+            android:layout_alignParentBottom="true"
+            >
 
             <TextView
                 android:id="@+id/name_restaurant"
@@ -80,26 +101,9 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginBottom="10dp"/>
 
-                <!--
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/myLocationButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginRight="20dp"
-                android:src="@drawable/ic_check_circle_black_48dp"
-                app:borderWidth="0dp"
-                app:elevation="10dp"
-                app:pressedTranslationZ="12dp"
-                app:fabSize="mini"
-                android:backgroundTint="@color/greyWhite"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"/>
-                -->
-
         </RelativeLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"

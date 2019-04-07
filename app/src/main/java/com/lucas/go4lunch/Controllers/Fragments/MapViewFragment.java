@@ -2,12 +2,17 @@ package com.lucas.go4lunch.Controllers.Fragments;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,8 +45,10 @@ import static android.content.Context.LOCATION_SERVICE;
 public class MapViewFragment extends Fragment
         implements com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
-    @BindView(R.id.myLocationButton) FloatingActionButton myLocationBtn;
-    @BindView(R.id.mapView) MapView mMapView;
+    @BindView(R.id.myLocationButton)
+    FloatingActionButton myLocationBtn;
+    @BindView(R.id.mapView)
+    MapView mMapView;
 
     private static final String PERMS = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final int LOCATION_PERMS = 100;
@@ -51,6 +58,9 @@ public class MapViewFragment extends Fragment
     private Disposable disposable;
     private LatLng currentPosition;
     Marker mMarker;
+
+    public MapViewFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,16 +91,16 @@ public class MapViewFragment extends Fragment
     // --------------------
 
     @OnClick(R.id.myLocationButton)
-    public void onClickLocationButton(){
+    public void onClickLocationButton() {
         getCurrentLocationAndZoomOn();
-        executeHttpRequestWithRetrofit();
+        //executeHttpRequestWithRetrofit();
     }
 
     @Override
     public boolean onMarkerClick(final Marker mMarker) {
         if (mMarker.equals(mMarker))
             launchDisplayRestaurantInfo(mMarker.getTitle());
-            mMarker.hideInfoWindow();
+        mMarker.hideInfoWindow();
         return true;
     }
 
@@ -98,7 +108,7 @@ public class MapViewFragment extends Fragment
     // CURRENT LOCATION
     // --------------------
 
-    private void getCurrentLocation () {
+    private void getCurrentLocation() {
         Criteria criteria = new Criteria();
         mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
         String provider = mLocationManager.getBestProvider(criteria, true);
@@ -114,7 +124,7 @@ public class MapViewFragment extends Fragment
         SharedPref.write(SharedPref.currentPositionLng, location.getLongitude() + "");
     }
 
-    private void getCurrentLocationAndZoomOn () {
+    private void getCurrentLocationAndZoomOn() {
         getCurrentLocation();
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -125,7 +135,8 @@ public class MapViewFragment extends Fragment
     }
 
     @Override
-    public void onLocationChanged(Location location) { }
+    public void onLocationChanged(Location location) {
+    }
 
     // --------------------
     // PERMISSION
@@ -134,7 +145,6 @@ public class MapViewFragment extends Fragment
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // 2 - Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
@@ -154,7 +164,7 @@ public class MapViewFragment extends Fragment
     // -------------------
 
     private void executeHttpRequestWithRetrofit(){
-        this.disposable = PlaceStreams.streamFetchPlaceIdAndFetchDetails(SharedPref.getCurrentPosition())
+        this.disposable = PlaceStreams.streamFetchPlaceIdAndFetchDetails(SharedPref.getCurrentPosition(), SharedPref.read(SharedPref.radius, 300))
                 .subscribeWith(new DisposableObserver<PlaceDetails>(){
                     @Override
                     public void onNext(PlaceDetails response) {
@@ -166,9 +176,8 @@ public class MapViewFragment extends Fragment
                                 .title(response.getResult().getPlaceId()));
                     }
 
-                    @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
-
-                    @Override public void onComplete() { Log.e("TAG","On Complete !!"); }
+                    @Override public void onError(Throwable e) {  }
+                    @Override public void onComplete() {  }
                 });
     }
 

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- TITTLE -->
+
+    <TextView
+        android:id="@+id/settings_title_appSetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="@android:color/black"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:text="APP SETTINGS"/>
+
+    <!-- NOTIFICATION VIEW -->
+
+    <RelativeLayout
+        android:id="@+id/notification_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settings_title_appSetting"
+        android:padding="15dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/img_notification"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_notifications_black_48dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/img_notification"
+            android:textSize="17dp"
+            android:textColor="@android:color/black"
+            android:text="Notification"/>
+
+    </RelativeLayout>
+
+    <!-- CHANGE DISTANCE RADIUS VIEW -->
+
+    <RelativeLayout
+        android:id="@+id/changeDistanceRadius_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/notification_view"
+        android:padding="15dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/img_chageDistanceRadius"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_edit_location_black_48dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/img_chageDistanceRadius"
+            android:textSize="17dp"
+            android:textColor="@android:color/black"
+            android:text="Change distance radius"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorSeparation"
+        android:layout_below="@+id/changeDistanceRadius_view"/>
+
+</RelativeLayout>

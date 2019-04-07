@@ -32,23 +32,6 @@ public class PlaceDetailSingleton {
         return instance;
     }
 
-    public void executeHttpRequestWithRetrofit(){
-        this.disposable = PlaceStreams.streamFetchNearbySearch(SharedPref.getCurrentPosition())
-                .subscribeWith(new DisposableObserver<NearbySearch>(){
-                    @Override
-                    public void onNext(NearbySearch response) {
-                        Log.e("TAG","On Next");
-
-                        List<Result> dlRestaurant = response.getResults();
-                        display(dlRestaurant);
-                    }
-
-                    @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
-
-                    @Override public void onComplete() { Log.e("TAG","On Complete !!"); }
-                });
-    }
-
     private void display(List<Result> dlArticles){
         System.out.println(dlArticles.get(0).getPlaceId());
     }

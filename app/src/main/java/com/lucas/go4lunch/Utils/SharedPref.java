@@ -12,6 +12,7 @@ public class SharedPref {
     private static SharedPreferences mSharedPref;
     public static String currentPositionLat = "currentPositionLat";
     public static String currentPositionLng = "currentPositionLng";
+    public static String radius = "radius";
 
     private SharedPref() { }
 

@@ -16,22 +16,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Controllers.Activities.DisplayRestaurantInfo"></activity>
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBWZx1xMJnhvXntblI-fLoNmZY64Gu2deY" />
-
-        <meta-data android:name="com.google.android.gms.version"
-                   android:value="@integer/google_play_services_version" />
-
-        <activity android:name=".Controllers.Activities.MainActivity">
+        <activity android:name=".Controllers.Activities.SettingsActivity"
+            android:parentActivityName=".Controllers.Activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controllers.Activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Controllers.Activities.ProfileActivity"
+            android:label="@string/toolbar_title_login_activity"
+            android:parentActivityName=".Controllers.Activities.MainActivity" />
+        <activity android:name=".Controllers.Activities.ConnexionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Controllers.Activities.DisplayRestaurantInfo" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".Controllers.Activities.MainActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"></activity>
     </application>
 
 </manifest>

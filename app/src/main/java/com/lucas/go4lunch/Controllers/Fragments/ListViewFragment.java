@@ -15,7 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
 import com.lucas.go4lunch.Utils.Constant;
 import com.lucas.go4lunch.Utils.PlaceDetailSingleton;
@@ -40,10 +44,11 @@ public class ListViewFragment extends Fragment {
     private listViewAdapter adapter;
     private Disposable disposable;
 
+    public ListViewFragment(){}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
-
         ButterKnife.bind(this, view);
         SharedPref.init(getContext());
 
@@ -89,7 +94,7 @@ public class ListViewFragment extends Fragment {
     // -------------------
 
     private void executeHttpRequestWithRetrofit(){
-        this.disposable = PlaceStreams.streamFetchNearbySearch(SharedPref.getCurrentPosition())
+        this.disposable = PlaceStreams.streamFetchNearbySearch(SharedPref.getCurrentPosition(), SharedPref.read(SharedPref.radius, 300))
                 .subscribeWith(new DisposableObserver<NearbySearch>(){
                     @Override
                     public void onNext(NearbySearch response) {
