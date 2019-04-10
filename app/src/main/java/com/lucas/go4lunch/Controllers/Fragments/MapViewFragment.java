@@ -41,6 +41,7 @@ import io.reactivex.observers.DisposableObserver;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static android.content.Intent.getIntent;
 
 public class MapViewFragment extends Fragment
         implements com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
@@ -69,6 +70,7 @@ public class MapViewFragment extends Fragment
         SharedPref.init(getContext());
 
         executeHttpRequestWithRetrofit();
+        System.out.println(SharedPref.read(SharedPref.radius, 300));
 
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
@@ -92,8 +94,9 @@ public class MapViewFragment extends Fragment
 
     @OnClick(R.id.myLocationButton)
     public void onClickLocationButton() {
+        mMap.clear();
         getCurrentLocationAndZoomOn();
-        //executeHttpRequestWithRetrofit();
+        executeHttpRequestWithRetrofit();
     }
 
     @Override
@@ -164,6 +167,7 @@ public class MapViewFragment extends Fragment
     // -------------------
 
     private void executeHttpRequestWithRetrofit(){
+        System.out.println(SharedPref.read(SharedPref.radius, 300));
         this.disposable = PlaceStreams.streamFetchPlaceIdAndFetchDetails(SharedPref.getCurrentPosition(), SharedPref.read(SharedPref.radius, 300))
                 .subscribeWith(new DisposableObserver<PlaceDetails>(){
                     @Override
@@ -186,7 +190,7 @@ public class MapViewFragment extends Fragment
     }
 
     // -------------------
-    // LAUNCH
+    // UTILS
     // -------------------
 
     private void launchDisplayRestaurantInfo(String placeId){

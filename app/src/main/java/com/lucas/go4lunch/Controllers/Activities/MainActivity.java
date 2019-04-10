@@ -1,13 +1,22 @@
 package com.lucas.go4lunch.Controllers.Activities;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -35,11 +44,13 @@ import com.lucas.go4lunch.Utils.UserHelper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ForwardingListener;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
+import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -63,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private String TAG = "placeautocomplete";
     int AUTOCOMPLETE_REQUEST_CODE = 1;
+    private final int NOTIFICATION_ID = 007;
+    private final String NOTIFICATION_TAG = "Go4Lunch";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +83,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Places.initialize(getApplicationContext(), "AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE");
+        SharedPref.init(this);
 
         this.configureToolbar();
         this.configureBottomView();
         this.configureDrawerLayout();
         this.configureNavigationView();
+        //this.displayNotification();
 
         fm.beginTransaction().add(R.id.activity_main_frame_layout, fragment3, "3").hide(fragment3).commit();
         fm.beginTransaction().add(R.id.activity_main_frame_layout, fragment2, "2").hide(fragment2).commit();
@@ -107,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void configureToolbar(){
         this.toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("I'm Hungry!");
+        toolbar.setTitle(getString(R.string.toolbar_title_main));
         setSupportActionBar(toolbar);
     }
 
@@ -146,18 +161,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        switch (id){
+        switch (item.getItemId()){
             case R.id.your_lunch:
                 break;
             case R.id.settings:
                 startSettingsActivity();
                 break;
             case R.id.logout:
-                this.signOutUserFromFirebase();
-                break;
-            default:
+                //this.signOutUserFromFirebase();
                 break;
         }
 
@@ -191,11 +203,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // REST REQUESTS
     // --------------------
 
-    public void signOutUserFromFirebase(){
+    /*public void signOutUserFromFirebase(){
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnSuccessListener(this, this.updateUIAfterRESTRequestsCompleted(ProfileActivity.SIGN_OUT_TASK));
-    }
+    }*/
 
     // ---------------------
     // PLACE AUTOCOMPLETE
@@ -232,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // UI
     // ---------------------
 
-    private OnSuccessListener<Void> updateUIAfterRESTRequestsCompleted(final int origin){
+    /*private OnSuccessListener<Void> updateUIAfterRESTRequestsCompleted(final int origin){
         return aVoid -> {
             switch (origin){
                 case ProfileActivity.SIGN_OUT_TASK:
@@ -245,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;
             }
         };
-    }
+    }*/
 
     private void DisplayUserInfo(){
 
@@ -283,6 +295,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
 
+    /*private void displayNotification() {
+        // 2 - Create a Style for the Notification
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        inboxStyle.setBigContentTitle("Ce midi vous mangez au Toc (bar restaurant Lille)");
+        inboxStyle.addLine("4 Boulevard du Maréchal Vaillant, 59000 Lille")
+                  .addLine("Pierre, Paul, Jack y mangent également !");
+
+        // 3 - Create a Channel (Android 8)
+        String channelId = getString(R.string.default_notification_channel_id);
+
+        // 4 - Build a Notification object
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.ic_notification_logo)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(getString(R.string.notification_title))
+                        .setAutoCancel(true)
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setStyle(inboxStyle);
+
+        // 5 - Add the Notification to the Notification Manager and show it.
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // 6 - Support Version >= Android 8
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence channelName = "Message provenant de Firebase";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(channelId, channelName, importance);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        // 7 - Show notification
+        notificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notificationBuilder.build());
+    }*/
 
     // ---------------------
     // LAUNCH
@@ -317,11 +363,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         myIntent.putExtras(bundle);
         this.startActivity(myIntent);
-    }
-
-    private void startProfileActivity(){
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
     }
 
     private void startConnexionActivity(){

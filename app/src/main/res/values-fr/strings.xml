@@ -4,44 +4,44 @@
     <!-- MENU DRAWER -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="your_lunch">YOUR LUNCH</string>
-    <string name="settings">SETTING</string>
-    <string name="logout">LOGOUT</string>
+    <string name="your_lunch">VOTRE DEJEUNE</string>
+    <string name="settings">PARAMETRE</string>
+    <string name="logout">DECONNEXION</string>
 
     <!-- BOTTOM NAVIGATION VIEW -->
-    <string name="bottom_navigation_menu_landscape">Workmates</string>
-    <string name="bottom_navigation_menu_logos">List View</string>
-    <string name="bottom_navigation_menu_android">Map View</string>
+    <string name="bottom_navigation_menu_landscape">Collègue</string>
+    <string name="bottom_navigation_menu_logos">Les restau</string>
+    <string name="bottom_navigation_menu_android">La map</string>
     <string name="title_activity_maps">Map</string>
     <string name="popup_title_permission_location_access">Access location</string>
 
     <string name="main_activity_description">Find a nice restaurant and invite your co-workers for lunch!</string>
 
     <!-- SETTING ACTIVITY -->
-    <string name="toolbar_title_setting">Setting</string>
-    <string name="title_user_setting">USER SETTINGS</string>
-    <string name="change_username">Change username</string>
-    <string name="change_profile_picture">Change profile picture</string>
-    <string name="delete_account">Delete account</string>
-    <string name="title_app_setting">APP SETTINGS</string>
+    <string name="toolbar_title_setting">Paramètre</string>
+    <string name="title_user_setting">PARAMETRE UTILISATEUR</string>
+    <string name="change_username">Changer de nom d\'utilisateur</string>
+    <string name="change_profile_picture">Changer de photo de profil</string>
+    <string name="delete_account">Supprimer le compte</string>
+    <string name="title_app_setting">PARAMETRE DE L\'APP</string>
     <string name="notification">Notification</string>
-    <string name="chage_distance_radius">Change distance radius</string>
-    <string name="language">Language</string>
-    <string name="title_appinfo_setting">APP INFORMATION</string>
-    <string name="update_note">Update note</string>
-    <string name="support">Support</string>
-    <string name="about">About</string>
+    <string name="chage_distance_radius">Modifier le rayon de recherche</string>
+    <string name="language">Langue</string>
+    <string name="title_appinfo_setting">INFORMATION DE L\'APP</string>
+    <string name="update_note">Note de mise à jour</string>
+    <string name="support">Assistance</string>
+    <string name="about">A propos</string>
 
     <!-- DISPLAY RESTAURANT ACTIVITY -->
-    <string name="call">CALL</string>
-    <string name="website">WEBSITE</string>
+    <string name="call">APPELER</string>
+    <string name="website">SITE WEB</string>
 
     <!-- NOTIFICATION SERVICE -->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="notification_title">"Vous avez reçu une notification"</string>
 
     <!-- MAIN ACTIVITY -->
-    <string name="toolbar_title_main">I\'m Hungry!</string>
+    <string name="toolbar_title_main">J\'ai faim!</string>
     <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
     <string name="error_no_internet">Aucune connexion internet !</string>
     <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>

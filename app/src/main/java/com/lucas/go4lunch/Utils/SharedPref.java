@@ -13,6 +13,8 @@ public class SharedPref {
     public static String currentPositionLat = "currentPositionLat";
     public static String currentPositionLng = "currentPositionLng";
     public static String radius = "radius";
+    public static String notificationAllow = "notificationAllow";
+    public static String currentLanguage = "currentLanguage";
 
     private SharedPref() { }
 

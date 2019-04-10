@@ -147,7 +147,7 @@
                     android:textStyle="bold"
                     android:textSize="17dp"
                     android:textColor="@color/colorPrimary"
-                    android:text="CALL" />
+                    android:text="@string/call" />
 
             </RelativeLayout>
 
@@ -211,7 +211,7 @@
                     android:textStyle="bold"
                     android:textSize="17dp"
                     android:textColor="@color/colorPrimary"
-                    android:text="WEBSITE" />
+                    android:text="@string/website" />
 
             </RelativeLayout>
 

@@ -9,14 +9,14 @@
     <!-- TITTLE -->
 
     <TextView
-        android:id="@+id/settings_title_appSetting"
+        android:id="@+id/setting_title_app"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:textColor="@android:color/black"
         android:textSize="18dp"
         android:textStyle="bold"
-        android:text="APP SETTINGS"/>
+        android:text="@string/title_app_setting"/>
 
     <!-- NOTIFICATION VIEW -->
 
@@ -26,7 +26,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/settings_title_appSetting"
+        android:layout_below="@+id/setting_title_app"
         android:padding="15dp"
         android:background="?android:attr/selectableItemBackground">
 
@@ -37,13 +37,21 @@
             android:src="@drawable/ic_notifications_black_48dp"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/txt_notification"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_marginLeft="40dp"
             android:layout_toRightOf="@+id/img_notification"
             android:textSize="17dp"
             android:textColor="@android:color/black"
-            android:text="Notification"/>
+            android:text="@string/notification"/>
+
+        <Switch
+            android:id="@+id/switch_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 
@@ -68,11 +76,42 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_marginLeft="40dp"
             android:layout_toRightOf="@+id/img_chageDistanceRadius"
             android:textSize="17dp"
             android:textColor="@android:color/black"
-            android:text="Change distance radius"/>
+            android:text="@string/chage_distance_radius"/>
+
+    </RelativeLayout>
+
+    <!-- LAGUAGE -->
+
+    <RelativeLayout
+        android:id="@+id/language_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/changeDistanceRadius_view"
+        android:padding="15dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/img_language"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_language_black_48dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/img_language"
+            android:textSize="17dp"
+            android:textColor="@android:color/black"
+            android:text="@string/language"/>
 
     </RelativeLayout>
 
@@ -81,6 +120,6 @@
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
         android:background="@color/colorSeparation"
-        android:layout_below="@+id/changeDistanceRadius_view"/>
+        android:layout_below="@+id/language_view"/>
 
 </RelativeLayout>

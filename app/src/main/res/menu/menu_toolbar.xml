@@ -2,10 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_toolbar_search"
-        android:icon="@drawable/ic_search_white_24dp"
+        android:icon="@drawable/ic_search_white_48dp"
         app:showAsAction="ifRoom"
-        android:title="Rechercher"
-        >
+        android:title="Rechercher">
     </item>
 
 </menu>

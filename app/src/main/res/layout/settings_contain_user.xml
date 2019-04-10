@@ -16,7 +16,7 @@
         android:textColor="@android:color/black"
         android:textSize="18dp"
         android:textStyle="bold"
-        android:text="USER SETTINGS"/>
+        android:text="@string/title_user_setting"/>
 
     <!-- CHANGE USERNAME VIEW -->
 
@@ -39,11 +39,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_marginLeft="40dp"
             android:layout_toRightOf="@+id/img_changeUsernam"
             android:textSize="17dp"
             android:textColor="@android:color/black"
-            android:text="Change username"/>
+            android:text="@string/change_username"/>
 
     </RelativeLayout>
 
@@ -68,11 +69,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_marginLeft="40dp"
             android:layout_toRightOf="@+id/img_chageProfilePicture"
             android:textSize="17dp"
             android:textColor="@android:color/black"
-            android:text="Change profile picture"/>
+            android:text="@string/change_profile_picture"/>
 
     </RelativeLayout>
 
@@ -97,11 +99,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_marginLeft="40dp"
             android:layout_toRightOf="@+id/img_deleteAccount"
             android:textSize="17dp"
             android:textColor="@android:color/black"
-            android:text="Delete account"/>
+            android:text="@string/delete_account"/>
 
     </RelativeLayout>
 
