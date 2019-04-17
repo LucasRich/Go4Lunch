@@ -1,5 +1,6 @@
 package com.lucas.go4lunch.Controllers.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
@@ -18,7 +19,11 @@ import android.widget.RelativeLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.SharedPref;
@@ -30,8 +35,6 @@ import java.util.Locale;
 public class ConnexionActivity extends BaseActivity {
 
     @BindView(R.id.connexion_activity_relative_layout) RelativeLayout relativeLayout;
-    @BindView(R.id.main_activity_button_login_google) Button buttonGoogleLongin;
-    @BindView(R.id.main_activity_button_login_facebook) Button buttonFacebookLogin;
 
     private static final int RC_SIGN_IN = 123;
 
@@ -44,8 +47,6 @@ public class ConnexionActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPref.init(this);
-
-        this.startMainActivity();
 
         if (this.isCurrentUserLogged()){
             this.startMainActivity();
@@ -79,7 +80,7 @@ public class ConnexionActivity extends BaseActivity {
 
     @OnClick(R.id.main_activity_button_login_google)
     public void onClickLoginGoogleButton() {
-            /*startActivityForResult(
+            startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setTheme(R.style.LoginTheme)
@@ -88,24 +89,40 @@ public class ConnexionActivity extends BaseActivity {
                             .setIsSmartLockEnabled(false, true)
                             .setLogo(R.drawable.ic_logo_auth)
                             .build(),
-                    RC_SIGN_IN);*/
+                    RC_SIGN_IN);
     }
 
     // --------------------
     // REST REQUEST
     // --------------------
 
-    // 1 - Http request that create user in firestore
     private void createUserInFirestore(){
-        if (this.getCurrentUser() != null){
 
-            String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
-            String username = this.getCurrentUser().getDisplayName();
-            String uid = this.getCurrentUser().getUid();
+        UserHelper.getUsersCollection().document(this.getCurrentUser().getUid())
+                .get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()){
+                    System.out.println("Account already create");
+                } else {
+                    String dayRestaurant = SharedPref.read(SharedPref.dayRestaurant, "none");
 
-            UserHelper.createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener());
-        }
+                    if (this.getCurrentUser() != null) {
+
+                        String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+                        String username = this.getCurrentUser().getDisplayName();
+                        String uid = this.getCurrentUser().getUid();
+                        String email = this.getCurrentUser().getEmail();
+
+                        UserHelper.createUser(uid, username, urlPicture, email, dayRestaurant).addOnFailureListener(this.onFailureListener());
+                        System.out.println("User add to firestore");
+                    }
+                }
+
+            } else { System.out.println("get failed with " + task.getException()); }
+        });
     }
+
 
     // --------------------
     // UI
@@ -127,8 +144,11 @@ public class ConnexionActivity extends BaseActivity {
 
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
+
+                this.createUserInFirestore();
                 showSnackBar(this.relativeLayout, getString(R.string.connection_succeed));
                 this.startMainActivity();
+
             } else { // ERRORS
                 if (response == null) {
                     showSnackBar(this.relativeLayout, getString(R.string.error_authentication_canceled));

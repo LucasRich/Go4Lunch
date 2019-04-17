@@ -1,4 +1,4 @@
-package com.lucas.mynews.Utils;
+package com.lucas.go4lunch.Utils;
 
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;

@@ -22,8 +22,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
 import com.lucas.go4lunch.Utils.Constant;
+import com.lucas.go4lunch.Utils.ItemClickSupport;
 import com.lucas.go4lunch.Utils.PlaceDetailSingleton;
-import com.lucas.mynews.Utils.ItemClickSupport;
 
 import com.lucas.go4lunch.Models.NearbySearch.NearbySearch;
 import com.lucas.go4lunch.Models.NearbySearch.Result;

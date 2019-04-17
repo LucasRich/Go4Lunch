@@ -14,25 +14,36 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.SharedPref;
+import com.lucas.go4lunch.Utils.UserHelper;
 
 import java.util.Locale;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     @BindView(R.id.switch_notification) Switch switchNotification;
+    @BindView(R.id.settings_img_profile) ImageView profileImg;
+    @BindView(R.id.settings_name_user) TextView nameUser;
 
     public final static int radius = SharedPref.read(SharedPref.radius, 300);
 
@@ -42,11 +53,16 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-        ButterKnife.bind(this);
         SharedPref.init(this);
 
+        this.initUser();
+        this.displayUserInfo();
         this.configureToolbar();
+    }
+
+    @Override
+    public int getFragmentLayout() {
+        return R.layout.activity_settings;
     }
 
     // -------------------
@@ -61,6 +77,10 @@ public class SettingsActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         toolbar.setElevation(0);
+    }
+
+    public void initUser(){
+
     }
 
     // -------------------
@@ -79,22 +99,28 @@ public class SettingsActivity extends AppCompatActivity {
         //DECLARATION
         EditText userNameText = (EditText)layout.findViewById(R.id.userNameText);
 
-        //INIT
-        userNameText.setText("Lucas Ri");
+        UserHelper.getUser(this.getCurrentUser().getUid()).addOnSuccessListener(documentSnapshot -> {
+
+            //INIT
+            User currentUser = documentSnapshot.toObject(User.class);
+            userNameText.setText(currentUser.getUsername());
+        });
 
         //BUTTON
         changeUserNameDialog.setPositiveButton("Save", (dialog, which) -> {
-            //SAVE NEW USERNAME
+            UserHelper.updateUsername(userNameText.getText().toString(), this.getCurrentUser().getUid());
+            restartMainActivity();
         });
         changeUserNameDialog.setNegativeButton("Cancel", (dialog, which) -> { });
 
         //DISPLAY DIALOG
         changeUserNameDialog.create().show();
+
     }
 
     @OnClick(R.id.changeProfilePicture_view)
     public void onCLickChangeProfilePicture(){
-        System.out.println("Change profile img");
+        //System.out.println(user.getUsername());
     }
 
     @OnClick(R.id.deleteAccount_view)
@@ -215,9 +241,23 @@ public class SettingsActivity extends AppCompatActivity {
     // UTILS
     // -------------------
 
-    public void restartMainActivity() {
-        Intent myIntent = new Intent(this, MainActivity.class);
-        this.startActivity(myIntent);
+    private void displayUserInfo(){
+
+        if (this.getCurrentUser() != null){
+
+            UserHelper.getUser(this.getCurrentUser().getUid()).addOnSuccessListener(documentSnapshot -> {
+
+                User currentUser = documentSnapshot.toObject(User.class);
+
+                String username = TextUtils.isEmpty(currentUser.getUsername()) ? getString(R.string.info_no_username_found) : currentUser.getUsername();
+                nameUser.setText(username);
+
+                Glide.with(this)
+                        .load(currentUser.getUrlPicture())
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(profileImg);
+            });
+        }
     }
 
     public void setLocale(String localeName) {
@@ -233,6 +273,11 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Language already selected!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void restartMainActivity() {
+        Intent myIntent = new Intent(this, MainActivity.class);
+        this.startActivity(myIntent);
     }
 
     public static int getGoodRadiusDistance (int radius){ return radius*= 100; }

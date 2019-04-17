@@ -35,6 +35,15 @@
     <!-- DISPLAY RESTAURANT ACTIVITY -->
     <string name="call">CALL</string>
     <string name="website">WEBSITE</string>
+    <string name="changeDayRestaurant">Are you sure ? You have already selected another restaurant</string>
+    <string name="selectDayRestaurant">You selected this restaurant</string>
+    <string name="unSeclectRestaurant">you canceled the selection of this restaurant</string>
+
+    <!-- DIALOG -->
+    <string name="message_cancel">Cancel</string>
+
+    <!-- WORMATES LIST -->
+    <string name="message_restaurant">is eating</string>
 
     <!-- NOTIFICATION SERVICE -->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
@@ -46,13 +55,14 @@
     <string name="error_no_internet">Aucune connexion internet !</string>
     <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
     <string name="connection_succeed">Authentification réussie !</string>
+    <string name="noDayRestaurant">You must select a restaurant before</string>
 
     <!-- LOGIN ACTIVITY -->
     <string name="info_no_email_found">Auncune adresse email</string>
     <string name="info_no_username_found">Aucun nom d\'utilisateur</string>
 
     <!-- FACEBOOK PURPOSE -->
-    <string name="facebook_application_id" translatable="false">862436300768192</string>
-    <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb862436300768192</string>
+    <string name="facebook_application_id" translatable="false">397492547469759</string>
+    <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb397492547469759</string>
 
 </resources>

@@ -15,6 +15,7 @@ public class SharedPref {
     public static String radius = "radius";
     public static String notificationAllow = "notificationAllow";
     public static String currentLanguage = "currentLanguage";
+    public static String dayRestaurant = "dayRestaurant";
 
     private SharedPref() { }
 

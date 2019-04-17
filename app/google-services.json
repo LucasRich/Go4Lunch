@@ -13,7 +13,12 @@
           "package_name": "com.lucas.go4lunch"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "23630895495-8ua9fikbocu5ajhd7f44tvlb76e6voco.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDFit-kZK1-qIyXtW5-0yvVB-VOO274a-s"

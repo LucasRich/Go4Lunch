@@ -5,9 +5,13 @@ import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
+import com.lucas.go4lunch.Utils.UserHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,23 +42,22 @@ public abstract class BaseActivity extends AppCompatActivity {
     // UI
     // --------------------
 
-    protected void configureToolbar(){
-        ActionBar ab = getSupportActionBar();
-        assert ab != null;
-        ab.setDisplayHomeAsUpEnabled(true);
-    }
+    /*public void initUser(){
+        UserHelper.getUsersCollection().document(this.getCurrentUser().getUid())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                user = documentSnapshot.toObject(User.class);
+            }
+        });
+    }*/
 
     // --------------------
     // ERROR HANDLER
     // --------------------
 
     protected OnFailureListener onFailureListener(){
-        return new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), getString(R.string.error_unknown_error), Toast.LENGTH_LONG).show();
-            }
-        };
+        return e -> Toast.makeText(getApplicationContext(), getString(R.string.error_unknown_error), Toast.LENGTH_LONG).show();
     }
 
     // --------------------

@@ -46,7 +46,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentBottom="true"
-                android:src="@drawable/img_test"
                 android:scaleType="centerCrop"
                 />
 
@@ -85,7 +84,7 @@
             <TextView
                 android:id="@+id/adress_restaurant"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:layout_below="@+id/name_restaurant"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="12dp"
@@ -227,6 +226,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@color/greyWhite"/>
+
+            <TextView
+                android:id="@+id/displayRestaurant_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Error"
+                android:textAlignment="center"
+                android:layout_margin="@dimen/default_large_margin"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/displayRestaurant_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
         </RelativeLayout>
 
     </RelativeLayout>

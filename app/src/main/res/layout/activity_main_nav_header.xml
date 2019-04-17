@@ -47,7 +47,7 @@
         android:textSize="18dp"
         android:textColor="@color/white"
         android:textStyle="bold"
-        android:text="Lucas Ri"
+        android:text=""
         />
 
     <!-- MAIL -->
@@ -62,6 +62,6 @@
         android:layout_marginBottom="40dp"
         android:textSize="16dp"
         android:textColor="@color/white"
-        android:text="richard.lucas.62240@gmail.com"/>
+        android:text=""/>
 
 </RelativeLayout>

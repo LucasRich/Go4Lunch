@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
+import com.lucas.go4lunch.Controllers.Activities.MainActivity;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.Constant;
@@ -70,7 +71,6 @@ public class MapViewFragment extends Fragment
         SharedPref.init(getContext());
 
         executeHttpRequestWithRetrofit();
-        System.out.println(SharedPref.read(SharedPref.radius, 300));
 
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
@@ -130,11 +130,16 @@ public class MapViewFragment extends Fragment
     private void getCurrentLocationAndZoomOn() {
         getCurrentLocation();
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(currentPosition)
-                .zoom(17)
-                .build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        try {
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(currentPosition)
+                    .zoom(17)
+                    .build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        } catch (Exception e) {
+
+        }
+
     }
 
     @Override
@@ -167,7 +172,6 @@ public class MapViewFragment extends Fragment
     // -------------------
 
     private void executeHttpRequestWithRetrofit(){
-        System.out.println(SharedPref.read(SharedPref.radius, 300));
         this.disposable = PlaceStreams.streamFetchPlaceIdAndFetchDetails(SharedPref.getCurrentPosition(), SharedPref.read(SharedPref.radius, 300))
                 .subscribeWith(new DisposableObserver<PlaceDetails>(){
                     @Override
@@ -200,6 +204,11 @@ public class MapViewFragment extends Fragment
         bundle.putString(Constant.bundleKeyPlaceId, placeId);
 
         myIntent.putExtras(bundle);
+        this.startActivity(myIntent);
+    }
+
+    public void restartMainActivity() {
+        Intent myIntent = new Intent(getActivity(), MainActivity.class);
         this.startActivity(myIntent);
     }
 
