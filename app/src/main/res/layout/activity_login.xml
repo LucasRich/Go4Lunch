@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context="com.lucas.go4lunch.Controllers.Activities.ConnexionActivity">
+    tools:context="com.lucas.go4lunch.Controllers.Activities.LoginActivity">
 
     <!-- MAIN CONTAINER -->
     <LinearLayout
@@ -42,37 +42,79 @@
             android:textColor="@android:color/white"
             />
 
-            <!-- BUTTON LOGIN -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- BUTTON LOGIN EMAIL -->
             <Button
-                android:id="@+id/main_activity_button_login_facebook"
+                android:layout_weight="1"
+                android:id="@+id/main_activity_button_login_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sign in with Facebook"
-                android:textColor="#fff"
+                android:text="@string/sign_in_email"
+                android:textColor="#000"
                 android:textSize="@dimen/default_text_size"
                 android:background="@drawable/button_facebook_connexion"
+                android:backgroundTint="@color/white"
                 style="?android:attr/borderlessButtonStyle"
-                android:padding="25dp"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 />
 
-            <!-- BUTTON LOGIN -->
+            <!-- BUTTON LOGIN FACEBOOK -->
             <Button
-                android:id="@+id/main_activity_button_login_google"
+                android:layout_weight="1"
+                android:id="@+id/main_activity_button_login_facebook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sign in with Google"
+                android:text="@string/sign_in_facebook"
                 android:textColor="#fff"
                 android:textSize="@dimen/default_text_size"
-                android:background="@drawable/button_google_connexion"
+                android:background="@drawable/button_facebook_connexion"
                 style="?android:attr/borderlessButtonStyle"
-                android:padding="25dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 />
+
+            <!-- BUTTON LOGIN GOOGLE -->
+            <Button
+                android:layout_weight="1"
+                android:id="@+id/main_activity_button_login_google"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_in_google"
+                android:textColor="#fff"
+                android:textSize="@dimen/default_text_size"
+                android:background="@drawable/button_google_connexion"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                />
+
+            <!-- BUTTON LOGIN TWITTER -->
+            <Button
+                android:layout_weight="1"
+                android:id="@+id/main_activity_button_login_twitter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_in_twitter"
+                android:textColor="#fff"
+                android:textSize="@dimen/default_text_size"
+                android:background="@drawable/button_google_connexion"
+                android:backgroundTint="@color/blueTwitter"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="40dp"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 

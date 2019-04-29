@@ -5,19 +5,18 @@ import android.location.Location;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
-import java.io.*;
-import java.util.regex.*;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.lucas.go4lunch.BuildConfig;
 import com.lucas.go4lunch.Models.NearbySearch.Result;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
+import com.lucas.go4lunch.Utils.UserHelper;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -42,17 +41,17 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.item_3_stars) ImageView threeStars;
     @BindView(R.id.item_2_stars) ImageView twoStars;
     @BindView(R.id.item_1_star) ImageView oneStar;
+    @BindView(R.id.item_nb_workmates) TextView nbWorkmates;
+    @BindView(R.id.item_nb_workmates_img) ImageView nbWorkmatesImg;
 
     private Disposable disposable;
     private int rate = 0;
     private Context context;
-    private List<String> weekdayOpen = new ArrayList<String>();
-
-    private static Pattern pattern;
-    private static Matcher matcher;
+    private List<String> weekdayOpen = new ArrayList<>();
 
     private Location currentLocation = new Location("");
     private Location restaurantLocation = new Location("");
+    private List<String> listUser = new ArrayList<>();
 
     // -------------------
     // INIT
@@ -65,6 +64,10 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void displayRestaurant(Result response){
+        //init
+        nbWorkmates.setVisibility(itemView.INVISIBLE);
+        nbWorkmatesImg.setVisibility(itemView.INVISIBLE);
+
         this.executeHttpRequestWithRetrofit(response.getPlaceId());
     }
 
@@ -79,13 +82,14 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
                     public void onNext(PlaceDetails response) {
                         Log.e("TAG","On Next");
 
+                        displayRestaurantPeople(placeId);
+
                         restaurantName.setText(response.getResult().getName());
                         restaurantInfo.setText(response.getResult().getTypes().get(0) + " - " + response.getResult().getVicinity());
 
                         if (response.getResult().getPhotos() != null){
                             String imageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=" +
-                                    response.getResult().getPhotos().get(0).getPhotoReference() +
-                                    "&key=AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE";
+                                    response.getResult().getPhotos().get(0).getPhotoReference() + "&key=" + BuildConfig.ApiKey;
 
                             Glide.with(itemView).load(imageUrl).into(restaurantImg);
                         }
@@ -95,7 +99,6 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
 
                         if(response.getResult().getOpeningHours() != null){
                             weekdayOpen.addAll(response.getResult().getOpeningHours().getWeekdayText());
-
                             displayOpeningHours(weekdayOpen, response);
 
                             /*if (response.getResult().getOpeningHours().getOpenNow()){
@@ -113,6 +116,7 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
                         displayStars(rate);
                         displayDistance(response.getResult().getGeometry().getLocation().getLat(),
                                         response.getResult().getGeometry().getLocation().getLng());
+
                     }
 
                     @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
@@ -134,6 +138,24 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
     // -------------------
     // UTILS
     // -------------------
+
+    private void displayRestaurantPeople(String placeId){
+        Query query = UserHelper.getAllUserRestaurant(placeId);
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                int i = 0;
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    i++;
+                }
+                if (i > 0){
+                    nbWorkmates.setVisibility(itemView.VISIBLE);
+                    nbWorkmatesImg.setVisibility(itemView.VISIBLE);
+                    nbWorkmates.setText("(" + String.valueOf(i) + ")");
+                }
+            }
+        });
+    }
 
     private void displayStars (int rate){
         switch(rate) {
@@ -213,11 +235,13 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
         }
 
         if (response.getResult().getOpeningHours().getOpenNow()){
-            restaurantOpenInfo.setText("Open now");
+            restaurantOpenInfo.setText(itemView.getResources().getString(R.string.open_now));
         }
         else {
-            try { restaurantOpenInfo.setText("Open until " + response.getResult().getOpeningHours().getPeriods().get(dayNumber).getOpen().getTime()); }
-            catch (Exception e){ restaurantOpenInfo.setText("Close"); }
+            try {
+                restaurantOpenInfo.setText(itemView.getResources().getString(R.string.open_until)+ " " + response.getResult().getOpeningHours().getPeriods().get(dayNumber).getOpen().getTime());
+            }
+            catch (Exception e){ restaurantOpenInfo.setText(itemView.getResources().getString(R.string.close)); }
         }
     }
 }

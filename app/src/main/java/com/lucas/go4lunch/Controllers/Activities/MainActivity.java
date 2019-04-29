@@ -3,7 +3,6 @@ package com.lucas.go4lunch.Controllers.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -13,13 +12,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
@@ -32,6 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.lucas.go4lunch.BuildConfig;
 import com.lucas.go4lunch.Controllers.Fragments.ListViewFragment;
 import com.lucas.go4lunch.Controllers.Fragments.MapViewFragment;
 import com.lucas.go4lunch.Controllers.Fragments.WorkmatesFragment;
@@ -50,7 +44,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -64,24 +57,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     final FragmentManager fm = getSupportFragmentManager();
     Fragment active = fragment1;
 
-    public static final int SIGN_OUT_TASK = 10;
-    public static final int DELETE_USER_TASK = 20;
-    public static final int UPDATE_USERNAME = 30;
-
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private String TAG = "placeautocomplete";
     int AUTOCOMPLETE_REQUEST_CODE = 1;
-    private final int NOTIFICATION_ID = 007;
-    private final String NOTIFICATION_TAG = "Go4Lunch";
-    private String dayRestaurant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        Places.initialize(getApplicationContext(), "AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE");
+        Places.initialize(getApplicationContext(), BuildConfig.ApiKey);
         SharedPref.init(this);
 
         this.configureToolbar();
@@ -94,34 +79,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         fm.beginTransaction().add(R.id.activity_main_frame_layout, fragment1, "1").commit();
     }
 
+    // ---------------------
+    // CONFIGURATION
+    // ---------------------
+
     @Override
     public int getFragmentLayout() {
         return R.layout.activity_main;
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            this.drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    // ---------------------
-    // CONFIGURATION
-    // ---------------------
 
     private void configureToolbar(){
         this.toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -144,6 +109,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void configureNavigationView(){
         this.navigationView = (NavigationView) findViewById(R.id.activity_main_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            this.drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     // ---------------------
@@ -242,8 +222,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 AutocompleteActivityMode.OVERLAY, fields)
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .setLocationRestriction(RectangularBounds.newInstance(
-                        new LatLng(currentLat - 0.01, currentLng - 0.02),
-                        new LatLng(currentLat + 0.01, currentLng + 0.02)))
+                        new LatLng(currentLat - 0.04, currentLng - 0.05),
+                        new LatLng(currentLat + 0.04, currentLng + 0.05)))
                 .build(this);
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
@@ -251,21 +231,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     // ---------------------
     // UI
     // ---------------------
-
-    private OnSuccessListener<Void> updateUIAfterRESTRequestsCompleted(final int origin){
-        return aVoid -> {
-            switch (origin){
-                case SIGN_OUT_TASK:
-                    finish();
-                    this.startConnexionActivity();
-                    break;
-                case DELETE_USER_TASK:
-                    finish();
-                    this.startConnexionActivity();
-                    break;
-            }
-        };
-    }
 
     private void displayUserInfo(){
         NavigationView navigationView = (NavigationView) findViewById(R.id.activity_main_nav_view);
@@ -282,11 +247,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     String username = TextUtils.isEmpty(currentUser.getUsername()) ? getString(R.string.info_no_username_found) : currentUser.getUsername();
                     menuName.setText(username);
 
-
-                    Glide.with(this)
-                            .load(currentUser.getUrlPicture())
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(menuImg);
+                    UserHelper.getUser(this.getCurrentUser().getUid()).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()){
+                                Glide.with(this)
+                                        .load(document.get("urlPicture"))
+                                        .apply(RequestOptions.circleCropTransform())
+                                        .into(menuImg);
+                            } else {
+                                System.out.println("No such document");
+                            }
+                        } else {
+                            System.out.println("get failed with " + task.getException());
+                        }
+                    });
 
                     menuMail.setText(currentUser.getEmail());
                 } catch (Exception e){this.startConnexionActivity();}
@@ -303,27 +278,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     // ---------------------
     // LAUNCH
     // ---------------------
-
-    public void launchFragmentMapView (){
-        MapViewFragment fragment = new MapViewFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.activity_main_frame_layout, fragment);
-        transaction.commit();
-    }
-
-    public void launchFragmentListView (){
-        ListViewFragment fragment = new ListViewFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.activity_main_frame_layout, fragment);
-        transaction.commit();
-    }
-
-    public void launchFragmentWorkmates (){
-        WorkmatesFragment fragment = new WorkmatesFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.activity_main_frame_layout, fragment);
-        transaction.commit();
-    }
 
     private void startDisplayRestaurantInfoActivity(String placeId){
         Intent myIntent = new Intent(this, DisplayRestaurantInfo.class);
@@ -346,7 +300,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     } else {
                         startDisplayRestaurantInfoActivity(document.get("dayRestaurant").toString());
                     }
-
                 } else {
                     System.out.println("No such document");
                 }
@@ -356,13 +309,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
     }
 
-    private void startConnexionActivity(){
-        Intent intent = new Intent(this, ConnexionActivity.class);
-        startActivity(intent);
-    }
-
     private void startSettingsActivity(){
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    // ---------------------
+    // LIFE CYCLE
+    // ---------------------
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

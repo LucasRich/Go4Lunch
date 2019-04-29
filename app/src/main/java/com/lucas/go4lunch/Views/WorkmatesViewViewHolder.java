@@ -2,21 +2,17 @@ package com.lucas.go4lunch.Views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,9 +24,7 @@ public class WorkmatesViewViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.workmates_item_desc) TextView descTxt;
     @BindView(R.id.workmates_item_img_profile) ImageView profileImage;
 
-    private Context cont;
     private Disposable disposable;
-
 
     public WorkmatesViewViewHolder(View itemView) {
         super(itemView);
@@ -42,7 +36,7 @@ public class WorkmatesViewViewHolder extends RecyclerView.ViewHolder {
         Glide.with(itemView).load(user.getUrlPicture()).apply(RequestOptions.circleCropTransform()).into(profileImage);
 
         if (user.getDayRestaurant().equals("none")){
-            descTxt.setText(user.getUsername() + " hasn't decided yet");
+            descTxt.setText(user.getUsername() + " " + itemView.getResources().getString(R.string.no_decided));
             descTxt.setTextColor(0xff9b9b9b);
         } else {
             this.executeHttpRequestWithRetrofit(user);
@@ -61,8 +55,8 @@ public class WorkmatesViewViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onNext(PlaceDetails response) {
                         descTxt.setTextColor(0xFF000000);
-                        descTxt.setText(user.getUsername() + " is eating at " + response.getResult().getName() + " (" + response.getResult().getTypes()
-                                .get(0) + ")");
+                        descTxt.setText(user.getUsername() + " " + itemView.getResources().getString(R.string.decided) + " " + response.getResult().getName() +
+                                " (" + response.getResult().getTypes().get(0) + ")");
                     }
 
                     @Override
@@ -77,10 +71,13 @@ public class WorkmatesViewViewHolder extends RecyclerView.ViewHolder {
                 });
     }
 
-    // --------------------
-    // UTILS
-    // --------------------
+    private void disposeWhenDestroy(){
+        if (this.disposable != null && !this.disposable.isDisposed()) this.disposable.dispose();
+    }
 
-    @Nullable
-    protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        this.disposeWhenDestroy();
+    }
 }

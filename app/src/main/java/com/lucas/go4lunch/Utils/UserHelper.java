@@ -56,6 +56,10 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(uid).update("dayRestaurant", restaurantId);
     }
 
+    public static Task<Void> updateUrlPicture(String url, String uid) {
+        return UserHelper.getUsersCollection().document(uid).update("urlPicture", url);
+    }
+
     // --- DELETE ---
 
     public static Task<Void> deleteUser(String uid) {

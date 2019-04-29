@@ -1,5 +1,6 @@
 package com.lucas.go4lunch.Controllers.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -25,6 +26,9 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    protected static final int SIGN_OUT_TASK = 10;
+    protected static final int DELETE_USER_TASK = 20;
+
     // --------------------
     // LIFE CYCLE
     // --------------------
@@ -39,25 +43,26 @@ public abstract class BaseActivity extends AppCompatActivity {
     public abstract int getFragmentLayout();
 
     // --------------------
-    // UI
-    // --------------------
-
-    /*public void initUser(){
-        UserHelper.getUsersCollection().document(this.getCurrentUser().getUid())
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                user = documentSnapshot.toObject(User.class);
-            }
-        });
-    }*/
-
-    // --------------------
-    // ERROR HANDLER
+    // HANDLER
     // --------------------
 
     protected OnFailureListener onFailureListener(){
         return e -> Toast.makeText(getApplicationContext(), getString(R.string.error_unknown_error), Toast.LENGTH_LONG).show();
+    }
+
+    protected OnSuccessListener<Void> updateUIAfterRESTRequestsCompleted(final int origin){
+        return aVoid -> {
+            switch (origin){
+                case SIGN_OUT_TASK:
+                    finish();
+                    this.startConnexionActivity();
+                    break;
+                case DELETE_USER_TASK:
+                    finish();
+                    this.startConnexionActivity();
+                    break;
+            }
+        };
     }
 
     // --------------------
@@ -68,5 +73,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
 
     protected Boolean isCurrentUserLogged(){ return (this.getCurrentUser() != null); }
+
+    protected void startConnexionActivity(){
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 }
 

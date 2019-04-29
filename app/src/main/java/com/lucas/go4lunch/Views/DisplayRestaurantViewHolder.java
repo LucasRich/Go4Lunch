@@ -1,6 +1,7 @@
 package com.lucas.go4lunch.Views;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +29,6 @@ public class DisplayRestaurantViewHolder extends RecyclerView.ViewHolder {
     @SuppressLint("SetTextI18n")
     public void updateWithdisplayRestaurant(User user) {
         Glide.with(itemView).load(user.getUrlPicture()).apply(RequestOptions.circleCropTransform()).into(profileImg);
-        descTxt.setText(user.getUsername() + " is joining!");
+        descTxt.setText(user.getUsername() + " " + itemView.getResources().getString(R.string.joining));
     }
 }

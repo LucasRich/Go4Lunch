@@ -10,19 +10,17 @@
 
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_menu_landscape">Collègue</string>
-    <string name="bottom_navigation_menu_logos">Les restau</string>
+    <string name="bottom_navigation_menu_logos">Les restos</string>
     <string name="bottom_navigation_menu_android">La map</string>
     <string name="title_activity_maps">Map</string>
-    <string name="popup_title_permission_location_access">Access location</string>
+    <string name="popup_title_permission_location_access">Accès à la location</string>
 
-    <string name="main_activity_description">Find a nice restaurant and invite your co-workers for lunch!</string>
 
     <!-- SETTING ACTIVITY -->
     <string name="toolbar_title_setting">Paramètre</string>
     <string name="title_user_setting">PARAMETRE UTILISATEUR</string>
     <string name="change_username">Changer de nom d\'utilisateur</string>
     <string name="change_profile_picture">Changer de photo de profil</string>
-    <string name="delete_account">Supprimer le compte</string>
     <string name="title_app_setting">PARAMETRE DE L\'APP</string>
     <string name="notification">Notification</string>
     <string name="chage_distance_radius">Modifier le rayon de recherche</string>
@@ -31,6 +29,14 @@
     <string name="update_note">Note de mise à jour</string>
     <string name="support">Assistance</string>
     <string name="about">A propos</string>
+    <string name="chage_username">Changer de nom d\'utilisateur</string>
+    <string name="delete_account_title">Supprimer votre compte</string>
+    <string name="delete_account_message">Êtes-vous sûr de vouloir supprimer votre compte?</string>
+    <string name="language_already_selected">Langue déjà sélectionnée!</string>
+    <string name="french">Français</string>
+    <string name="english">Anglais</string>
+    <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
+    <string name="toast_title_no_image_chosen">Aucune image choisie&#8230;</string>
 
     <!-- DISPLAY RESTAURANT ACTIVITY -->
     <string name="call">APPELER</string>
@@ -38,28 +44,50 @@
     <string name="changeDayRestaurant">Êtes vous sure ? Vous avez déja sélectionné un autre restaurant</string>
     <string name="selectDayRestaurant">Vous avez sélectionné ce restaurant</string>
     <string name="unSeclectRestaurant">Vous avez annulé la selection de ce restaurant</string>
+    <string name="no_phone_number">Ce restaurant n\'a pas de numéro de téléphone</string>
+    <string name="google_rate">Vous pouvez noter et commenter ce restaurant sur google map</string>
+    <string name="no_website">Ce restaurant n\'a pas de site web</string>
+    <string name="joining">sera la!</string>
+    <string name="nobody">Personne ne mange ici pour l\'instant</string>
+
+    <!-- LIST VIEW FRAGMENT -->
+    <string name="open_now">Ouvert</string>
+    <string name="open_until">Ouvre à </string>
+    <string name="close">Fermé</string>
 
     <!-- DIALOG -->
     <string name="message_cancel">Annulé</string>
+    <string name="message_save">Sauvegarder</string>
+    <string name="message_ok">Ok</string>
 
     <!-- WORMATES LIST -->
-    <string name="message_restaurant">mange</string>
+    <string name="no_decided"> n\'a pas encore décidé</string>
+    <string name="decided">mange à</string>
 
     <!-- NOTIFICATION SERVICE -->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="notification_title">"Vous avez reçu une notification"</string>
+    <string name="restaurant_lunch">Ce midi vous mangez à </string>
+    <string name="also_eat"> mange aussi là-bas!</string>
 
     <!-- MAIN ACTIVITY -->
     <string name="toolbar_title_main">J\'ai faim!</string>
-    <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
-    <string name="error_no_internet">Aucune connexion internet !</string>
-    <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
-    <string name="connection_succeed">Authentification réussie !</string>
     <string name="noDayRestaurant">Vous devez sélectionner un retsaurant avant</string>
 
     <!-- LOGIN ACTIVITY -->
     <string name="info_no_email_found">Auncune adresse email</string>
     <string name="info_no_username_found">Aucun nom d\'utilisateur</string>
+    <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
+    <string name="error_no_internet">Aucune connexion internet !</string>
+    <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
+    <string name="connection_succeed">Authentification réussie !</string>
+    <string name="error_account_already_create">Compte déja créé</string>
+    <string name="user_add_firestore">Utilisateur ajouté à firestore</string>
+    <string name="main_activity_description">Trouvez un bon restaurant et invitez vos collègues à déjeuner!</string>
+    <string name="sign_in_facebook">Connectez-vous avec Facebook</string>
+    <string name="sign_in_google">Connectez-vous avec Google</string>
+    <string name="sign_in_twitter">Connectez-vous avec twitter</string>
+    <string name="sign_in_email">Connectez-vous avec email</string>
 
     <!-- FACEBOOK PURPOSE -->
     <string name="facebook_application_id" translatable="false">397492547469759</string>

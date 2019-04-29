@@ -1,12 +1,10 @@
 package com.lucas.go4lunch.Views.Adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.lucas.go4lunch.Models.NearbySearch.Result;
 import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Views.WorkmatesViewViewHolder;

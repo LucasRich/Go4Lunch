@@ -20,8 +20,7 @@
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            app:srcCompat="@drawable/ic_anon_user_48dp"/>
+            android:layout_marginBottom="20dp" />
 
         <!-- PROFILE NAME -->
 
@@ -35,7 +34,7 @@
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="Lucas Ri"/>
+            android:text=""/>
 
     </RelativeLayout>
 

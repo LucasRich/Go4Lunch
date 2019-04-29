@@ -27,7 +27,7 @@
             android:layout_toRightOf="@+id/workmates_item_img_profile"
             android:textSize="16dp"
             android:textColor="@android:color/black"
-            android:text="Lucas is eating french (Le Zinc)"/>
+            android:text=""/>
 
     </RelativeLayout>
 

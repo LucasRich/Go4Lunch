@@ -15,14 +15,12 @@
     <string name="title_activity_maps">Map</string>
     <string name="popup_title_permission_location_access">Access location</string>
 
-    <string name="main_activity_description">Find a nice restaurant and invite your co-workers for lunch!</string>
 
     <!-- SETTING ACTIVITY -->
     <string name="toolbar_title_setting">Setting</string>
     <string name="title_user_setting">USER SETTINGS</string>
     <string name="change_username">Change username</string>
     <string name="change_profile_picture">Change profile picture</string>
-    <string name="delete_account">Delete account</string>
     <string name="title_app_setting">APP SETTINGS</string>
     <string name="notification">Notification</string>
     <string name="chage_distance_radius">Change distance radius</string>
@@ -31,6 +29,14 @@
     <string name="update_note">Update note</string>
     <string name="support">Support</string>
     <string name="about">About</string>
+    <string name="chage_username">Change username</string>
+    <string name="delete_account_title">Delete account</string>
+    <string name="delete_account_message">Are you sure, do you want delete your account ?</string>
+    <string name="language_already_selected">Language already selected!</string>
+    <string name="french">French</string>
+    <string name="english">English</string>
+    <string name="popup_title_permission_files_access">This application needs permission to work.</string>
+    <string name="toast_title_no_image_chosen">No image chosen&#8230;</string>
 
     <!-- DISPLAY RESTAURANT ACTIVITY -->
     <string name="call">CALL</string>
@@ -38,28 +44,50 @@
     <string name="changeDayRestaurant">Are you sure ? You have already selected another restaurant</string>
     <string name="selectDayRestaurant">You selected this restaurant</string>
     <string name="unSeclectRestaurant">you canceled the selection of this restaurant</string>
+    <string name="no_phone_number">This restaurant doesn\'t have phone number</string>
+    <string name="google_rate">You can rate and comment this restaurant on google map</string>
+    <string name="no_website">This restaurant doesn\'t have website</string>
+    <string name="joining"> is joining!</string>
+    <string name="nobody">No one is eating here for now</string>
+
+    <!-- LIST VIEW FRAGMENT -->
+    <string name="open_now">Open now</string>
+    <string name="open_until">Open until </string>
+    <string name="close">Close</string>
 
     <!-- DIALOG -->
     <string name="message_cancel">Cancel</string>
+    <string name="message_save">Save</string>
+    <string name="message_ok">Ok</string>
 
-    <!-- WORMATES LIST -->
-    <string name="message_restaurant">is eating</string>
+    <!-- WORMATES VIEW FRAGMENT -->
+    <string name="no_decided"> hasn\'t decided yet</string>
+    <string name="decided">is eating at </string>
 
     <!-- NOTIFICATION SERVICE -->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
-    <string name="notification_title">"Vous avez reçu une notification"</string>
-
+    <string name="notification_title">"You have received a notification"</string>
+    <string name="restaurant_lunch">This lunch you eat at </string>
+    <string name="also_eat"> also eat there!</string>
+    
     <!-- MAIN ACTIVITY -->
     <string name="toolbar_title_main">I\'m Hungry!</string>
-    <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
-    <string name="error_no_internet">Aucune connexion internet !</string>
-    <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
-    <string name="connection_succeed">Authentification réussie !</string>
     <string name="noDayRestaurant">You must select a restaurant before</string>
 
     <!-- LOGIN ACTIVITY -->
-    <string name="info_no_email_found">Auncune adresse email</string>
-    <string name="info_no_username_found">Aucun nom d\'utilisateur</string>
+    <string name="info_no_email_found">No email address</string>
+    <string name="info_no_username_found">No username</string>
+    <string name="connection_succeed">Successful authentication !</string>
+    <string name="error_authentication_canceled">Authentication canceled&#8230;</string>
+    <string name="error_no_internet">No internet connection!</string>
+    <string name="error_unknown_error">An unknown error has occurred&#8230;</string>
+    <string name="error_account_already_create">Account already create</string>
+    <string name="user_add_firestore">User add to firestore</string>
+    <string name="main_activity_description">Find a nice restaurant and invite your co-workers for lunch!</string>
+    <string name="sign_in_facebook">Sign in with Facebook</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="sign_in_twitter">Sign in with twitter</string>
+    <string name="sign_in_email">Sign in with email</string>
 
     <!-- FACEBOOK PURPOSE -->
     <string name="facebook_application_id" translatable="false">397492547469759</string>

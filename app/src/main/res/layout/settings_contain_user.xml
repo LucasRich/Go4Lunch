@@ -104,7 +104,7 @@
             android:layout_toRightOf="@+id/img_deleteAccount"
             android:textSize="17dp"
             android:textColor="@android:color/black"
-            android:text="@string/delete_account"/>
+            android:text="@string/delete_account_title"/>
 
     </RelativeLayout>
 

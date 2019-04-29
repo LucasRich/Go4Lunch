@@ -39,6 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
+import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -136,10 +137,7 @@ public class MapViewFragment extends Fragment
                     .zoom(17)
                     .build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        } catch (Exception e) {
-
-        }
-
+        } catch (Exception e) { }
     }
 
     @Override
@@ -204,11 +202,6 @@ public class MapViewFragment extends Fragment
         bundle.putString(Constant.bundleKeyPlaceId, placeId);
 
         myIntent.putExtras(bundle);
-        this.startActivity(myIntent);
-    }
-
-    public void restartMainActivity() {
-        Intent myIntent = new Intent(getActivity(), MainActivity.class);
         this.startActivity(myIntent);
     }
 

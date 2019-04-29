@@ -1,8 +1,6 @@
 package com.lucas.go4lunch.Controllers.Activities;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -10,21 +8,14 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.SharedPref;
 import com.lucas.go4lunch.Utils.UserHelper;
@@ -32,7 +23,7 @@ import com.lucas.go4lunch.Utils.UserHelper;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class ConnexionActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.connexion_activity_relative_layout) RelativeLayout relativeLayout;
 
@@ -40,7 +31,7 @@ public class ConnexionActivity extends BaseActivity {
 
     @Override
     public int getFragmentLayout() {
-        return R.layout.activity_connexion;
+        return R.layout.activity_login;
     }
 
     @Override
@@ -56,13 +47,26 @@ public class ConnexionActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // 4 - Handle SignIn Activity response on activity result
         this.handleResponseAfterSignIn(requestCode, resultCode, data);
     }
 
     // --------------------
     // ACTIONS
     // --------------------
+
+    @OnClick(R.id.main_activity_button_login_email)
+    public void onClickLoginEmailButton() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setTheme(R.style.LoginTheme)
+                        .setAvailableProviders(
+                                Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
+                        .setIsSmartLockEnabled(false, true)
+                        .setLogo(R.drawable.ic_logo_auth)
+                        .build(),
+                RC_SIGN_IN);
+    }
 
     @OnClick(R.id.main_activity_button_login_facebook)
     public void onClickLoginFacebookButton() {
@@ -103,19 +107,19 @@ public class ConnexionActivity extends BaseActivity {
             if (task.isSuccessful()){
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()){
-                    System.out.println("Account already create");
+                    System.out.println(getString(R.string.error_account_already_create));
                 } else {
                     String dayRestaurant = SharedPref.read(SharedPref.dayRestaurant, "none");
 
                     if (this.getCurrentUser() != null) {
 
-                        String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+                        String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : "https://firebasestorage.googleapis.com/v0/b/go4lunch-236014.appspot.com/o/default_profile_picture.png?alt=media&token=c36ffabe-048d-451f-a30b-279061b15178";
                         String username = this.getCurrentUser().getDisplayName();
                         String uid = this.getCurrentUser().getUid();
                         String email = this.getCurrentUser().getEmail();
 
                         UserHelper.createUser(uid, username, urlPicture, email, dayRestaurant).addOnFailureListener(this.onFailureListener());
-                        System.out.println("User add to firestore");
+                        System.out.println(getString(R.string.user_add_firestore));
                     }
                 }
 
@@ -128,7 +132,6 @@ public class ConnexionActivity extends BaseActivity {
     // UI
     // --------------------
 
-    // 2 - Show Snack Bar with a message
     private void showSnackBar(RelativeLayout relativeLayout, String message){
         Snackbar.make(relativeLayout, message, Snackbar.LENGTH_SHORT).show();
     }

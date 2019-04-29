@@ -1,6 +1,6 @@
 package com.lucas.go4lunch.Utils;
 
-import com.lucas.go4lunch.Controllers.Activities.SettingsActivity;
+import com.lucas.go4lunch.BuildConfig;
 import com.lucas.go4lunch.Models.NearbySearch.NearbySearch;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 
@@ -13,11 +13,13 @@ import retrofit2.http.Query;
 
 public interface PlaceService {
 
-    @GET("nearbysearch/json?&type=restaurant&key=AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE")
+    String apiKey = BuildConfig.ApiKey;
+
+    @GET("nearbysearch/json?&type=restaurant&key=" + apiKey)
     Observable<NearbySearch> getNearbySearch(@Query("location") String location,
                                              @Query("radius") int radius);
 
-    @GET("details/json?&key=AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE")
+    @GET("details/json?&key=" + apiKey)
     Observable<PlaceDetails> getPlaceDetails(@Query("placeid") String placeId);
 
     Retrofit retrofit = new Retrofit.Builder()

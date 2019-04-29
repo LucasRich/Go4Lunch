@@ -42,7 +42,7 @@
             android:textColor="@android:color/black"
             android:textSize="18dp"
 
-            android:text="French"/>
+            android:text="@string/french"/>
 
     </RelativeLayout>
 
@@ -84,7 +84,7 @@
             android:textColor="@android:color/black"
             android:textSize="18dp"
 
-            android:text="English"/>
+            android:text="@string/english"/>
 
     </RelativeLayout>
 

@@ -1,5 +1,8 @@
 package com.lucas.go4lunch.Controllers.Activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,27 +14,26 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
+import com.lucas.go4lunch.BuildConfig;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
+import com.lucas.go4lunch.Utils.AlarmReceiver;
 import com.lucas.go4lunch.Utils.Constant;
-import com.lucas.go4lunch.Utils.ItemClickSupport;
 import com.lucas.go4lunch.Utils.PlaceStreams;
+import com.lucas.go4lunch.Utils.SharedPref;
 import com.lucas.go4lunch.Utils.UserHelper;
 import com.lucas.go4lunch.Views.Adapter.DisplayRestaurantAdapter;
-import com.lucas.go4lunch.Views.Adapter.WorkmatesViewAdapter;
 
-import androidx.annotation.NonNull;
+import java.util.Calendar;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
@@ -54,6 +56,8 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
     private String phone_number;
     private String restaurantUrl;
     private String webSite;
+    private String nameOfRestaurant;
+    private String addressOfRestaurant;
     private int rate;
     private String placeId;
     private String userUid;
@@ -135,7 +139,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
             dialIntent.setData(Uri.parse("tel:" + phone_number));
             startActivity(dialIntent);
         }
-        else { Toast.makeText(getApplication(), "This restaurant doesn't have have phone number", Toast.LENGTH_LONG).show(); }
+        else { Toast.makeText(getApplication(), getString(R.string.no_phone_number), Toast.LENGTH_LONG).show(); }
     }
 
     @OnClick(R.id.like_view)
@@ -143,7 +147,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantUrl));
         startActivity(intent);
 
-        Toast.makeText(getApplication(), "You can rate and comment this restaurant on google map", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplication(), getString(R.string.google_rate), Toast.LENGTH_LONG).show();
     }
 
     @OnClick(R.id.website_view)
@@ -152,7 +156,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webSite));
             startActivity(intent);
         }
-        else { Toast.makeText(getApplication(), "This restaurant doesn't have website", Toast.LENGTH_LONG).show(); }
+        else { Toast.makeText(getApplication(), getString(R.string.no_website), Toast.LENGTH_LONG).show(); }
 
     }
 
@@ -166,11 +170,13 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                         UserHelper.updateDayRestaurant("none", userUid);
                         restaurantChoiceFab.setImageResource(R.drawable.ic_check_circle_black_48dp);
                         Toast.makeText(getApplication(), getString(R.string.unSeclectRestaurant), Toast.LENGTH_LONG).show();
+                        SharedPref.write(SharedPref.notificationAllow, false);
                     } else {
                         if (document.get("dayRestaurant").equals("none")){
                             UserHelper.updateDayRestaurant(placeId, userUid);
                             restaurantChoiceFab.setImageResource(R.drawable.ic_highlight_off_black_48dp);
                             Toast.makeText(getApplication(), getString(R.string.selectDayRestaurant), Toast.LENGTH_LONG).show();
+                            SharedPref.write(SharedPref.notificationAllow, true);
                         } else {
                             new AlertDialog.Builder(this)
                                     .setMessage(getString(R.string.changeDayRestaurant))
@@ -178,8 +184,10 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                                         UserHelper.updateDayRestaurant(placeId, userUid);
                                         restaurantChoiceFab.setImageResource(R.drawable.ic_highlight_off_black_48dp);
                                         Toast.makeText(getApplication(), (R.string.selectDayRestaurant), Toast.LENGTH_LONG).show();
+                                        SharedPref.write(SharedPref.notificationAllow, true);
                                     })
                                     .setNegativeButton(getString(R.string.message_cancel), (dialog, which) -> {
+                                        SharedPref.write(SharedPref.notificationAllow, false);
                                     }).show();
                         }
                     }
@@ -190,6 +198,8 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                 System.out.println("get failed with " + task.getException());
             }
         });
+        SharedPref.write(SharedPref.dayRestaurant, placeId);
+        this.startNotificationAtMidday();
     }
 
     // -------------------
@@ -203,13 +213,14 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                     public void onNext(PlaceDetails response) {
                         Log.e("TAG","On Next");
 
-                        nameRestaurant.setText(response.getResult().getName());
+                        nameOfRestaurant = response.getResult().getName();
+                        nameRestaurant.setText(nameOfRestaurant);
+                        addressOfRestaurant = response.getResult().getVicinity() ;
                         addressRestaurant.setText(response.getResult().getTypes().get(0) + " - " + response.getResult().getVicinity());
 
                         if (response.getResult().getPhotos() != null){
                             String imageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=" +
-                                                response.getResult().getPhotos().get(0).getPhotoReference() +
-                                                    "&key=AIzaSyCEfMLNQcoXBDA3fHM3dvghZQifRN1XdXE";
+                                                response.getResult().getPhotos().get(0).getPhotoReference() + "&key=" + BuildConfig.ApiKey;
 
                             Glide.with(getApplicationContext()).load(imageUrl).into(imgRestaurant);
                         }
@@ -285,6 +296,24 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                 fiveStars.setVisibility(View.INVISIBLE);
                 break;
         }
+    }
+
+    private void startNotificationAtMidday(){
+        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        Bundle bundle = new Bundle();
+
+        SharedPref.write(SharedPref.notificationRestaurantName, nameOfRestaurant);
+        SharedPref.write(SharedPref.notificationRestaurantAddress, addressOfRestaurant);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,12);
+        calendar.set(Calendar.MINUTE, 00);
+
+        //alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, pendingIntent);
     }
 
     @Override
