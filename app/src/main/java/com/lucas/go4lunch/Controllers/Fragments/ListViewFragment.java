@@ -39,6 +39,7 @@ public class ListViewFragment extends Fragment {
     private listViewAdapter adapter;
     private Disposable disposable;
 
+
     public ListViewFragment(){}
 
     @Override

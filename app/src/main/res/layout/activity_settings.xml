@@ -12,46 +12,61 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        android:scrollbars="none">
+    <include
+    android:id="@+id/progressBar"
+    layout="@layout/loading"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_margin="60dp"/>
 
-        <RelativeLayout
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar">
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
 
-            <include
-                android:id="@+id/settings_header"
-                layout="@layout/settings_contain_header"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content">
 
-            <include
-                android:id="@+id/settings_user"
-                layout="@layout/settings_contain_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/settings_header"/>
+                <include
+                    android:id="@+id/settings_header"
+                    layout="@layout/settings_contain_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-            <include
-                android:id="@+id/settings_app"
-                layout="@layout/settings_contain_app"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/settings_user"/>
+                <include
+                    android:id="@+id/settings_user"
+                    layout="@layout/settings_contain_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/settings_header"/>
 
-            <include
-                android:id="@+id/settings_appinfo"
-                layout="@layout/settings_contain_appinfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/settings_app"
-                android:layout_marginBottom="10dp"/>
+                <include
+                    android:id="@+id/settings_app"
+                    layout="@layout/settings_contain_app"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/settings_user"/>
 
-        </RelativeLayout>
+                <include
+                    android:id="@+id/settings_appinfo"
+                    layout="@layout/settings_contain_appinfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/settings_app"
+                    android:layout_marginBottom="10dp"/>
 
-    </ScrollView>
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
 
 </RelativeLayout>

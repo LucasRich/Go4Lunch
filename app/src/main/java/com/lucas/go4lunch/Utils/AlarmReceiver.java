@@ -10,8 +10,11 @@ import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.lucas.go4lunch.Controllers.Activities.BaseActivity;
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
 import com.lucas.go4lunch.R;
 
@@ -35,21 +38,23 @@ public class AlarmReceiver extends BroadcastReceiver {
         cont = context;
         restaurantId = SharedPref.read(SharedPref.dayRestaurant, "");
 
-        String username = SharedPref.read(SharedPref.notificationRestaurantName, "");
+        String restaurantName = SharedPref.read(SharedPref.notificationRestaurantName, "");
         String address = SharedPref.read(SharedPref.notificationRestaurantAddress, "");
 
-        if (SharedPref.read(SharedPref.notificationAllow, false) && SharedPref.read(SharedPref.getNotificationActived, false)){
+        if (SharedPref.read(SharedPref.notificationAllow, false) && SharedPref.read(SharedPref.getNotificationActived, true)){
             Query query = UserHelper.getAllUserRestaurant(restaurantId);
 
             query.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        listUser.add(String.valueOf(document.getData().get("username")));
+                        if (!this.getCurrentUser().getUid().equals(String.valueOf(document.getData().get("uid")))){
+                            listUser.add(String.valueOf(document.getData().get("username")));
+                        }
                     }
                     StringBuilder peopleRestaurant = new StringBuilder();
 
                     for (int i = 0; i < listUser.size(); i++){
-                        peopleRestaurant.append(listUser.get(i)).append(", ");
+                            peopleRestaurant.append(listUser.get(i)).append(", ");
                     }
 
                     Intent mIntent = new Intent(cont, DisplayRestaurantInfo.class);
@@ -59,9 +64,16 @@ public class AlarmReceiver extends BroadcastReceiver {
                     PendingIntent pendingIntent = PendingIntent.getActivity(cont, 0, mIntent, PendingIntent.FLAG_ONE_SHOT);
 
                     NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-                    inboxStyle.setBigContentTitle(cont.getString(R.string.restaurant_lunch) + username);
-                    inboxStyle.addLine(address)
-                            .addLine(listUser + cont.getString(R.string.also_eat));
+
+                    if (listUser.size() > 0){
+                        inboxStyle.setBigContentTitle(cont.getString(R.string.restaurant_lunch) + " " + restaurantName);
+                        inboxStyle.addLine(address)
+                                .addLine(peopleRestaurant + cont.getString(R.string.also_eat));
+                    } else {
+                        inboxStyle.setBigContentTitle(cont.getString(R.string.restaurant_lunch) + restaurantName);
+                        inboxStyle.addLine(address);
+                    }
+
 
                     // 3 - Create a Channel (Android 8)
                     String channelId = cont.getString(R.string.default_notification_channel_id);
@@ -98,4 +110,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             System.out.println("Notification denied");
         }
     }
+
+    protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
+
 }

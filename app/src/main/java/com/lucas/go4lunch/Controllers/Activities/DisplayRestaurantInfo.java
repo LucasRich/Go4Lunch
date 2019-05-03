@@ -6,17 +6,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.lucas.go4lunch.BuildConfig;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
 import com.lucas.go4lunch.Models.ProfileFile.User;
@@ -26,10 +35,14 @@ import com.lucas.go4lunch.Utils.Constant;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
 import com.lucas.go4lunch.Utils.UserHelper;
+import com.lucas.go4lunch.Utils.UtilsFunction;
 import com.lucas.go4lunch.Views.Adapter.DisplayRestaurantAdapter;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,8 +56,6 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
     @BindView(R.id.img_restaurant) ImageView imgRestaurant;
     @BindView(R.id.name_restaurant) TextView nameRestaurant;
     @BindView(R.id.adress_restaurant) TextView addressRestaurant;
-    @BindView(R.id.item_5_stars) ImageView fiveStars;
-    @BindView(R.id.item_4_stars) ImageView fourStars;
     @BindView(R.id.item_3_stars) ImageView threeStars;
     @BindView(R.id.item_2_stars) ImageView twoStars;
     @BindView(R.id.item_1_star) ImageView oneStar;
@@ -58,10 +69,12 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
     private String webSite;
     private String nameOfRestaurant;
     private String addressOfRestaurant;
-    private int rate;
+    private int currentRate;
     private String placeId;
     private String userUid;
     private DisplayRestaurantAdapter displayRestaurantAdapter;
+    private float averageRate = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +87,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
         this.initFab();
         this.executeHttpRequestWithRetrofit();
         this.configureRecyclerView();
+        this.getRating();
     }
 
     @Override
@@ -96,7 +110,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                         restaurantChoiceFab.setImageResource(R.drawable.ic_check_circle_black_48dp);
                     }
                 } else {
-                    System.out.println("No such document");
+                    //System.out.println("No such document");
                 }
             } else {
                 System.out.println("get failed with " + task.getException());
@@ -144,10 +158,50 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
 
     @OnClick(R.id.like_view)
     public void onClickLikeView(){
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantUrl));
-        startActivity(intent);
+        //CREATION
+        AlertDialog.Builder rateDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.select_stars, (ViewGroup)findViewById(R.id.ratingLayout));
+        rateDialog.setView(layout);
 
-        Toast.makeText(getApplication(), getString(R.string.google_rate), Toast.LENGTH_LONG).show();
+        //DECLARATION
+        ImageView star1 = (ImageView)layout.findViewById(R.id.star1);
+        ImageView star2 = (ImageView)layout.findViewById(R.id.star2);
+        ImageView star3 = (ImageView)layout.findViewById(R.id.star3);
+
+        //INIT INPUT
+        displayStars(averageRate, star1, star2, star3);
+
+        star1.setOnClickListener(v -> {
+            star1.setImageResource(R.drawable.ic_star_black_48dp);
+            star2.setImageResource(R.drawable.ic_star_empty_48dp);
+            star3.setImageResource(R.drawable.ic_star_empty_48dp);
+            currentRate = 1;
+        });
+
+        star2.setOnClickListener(v -> {
+            star1.setImageResource(R.drawable.ic_star_black_48dp);
+            star2.setImageResource(R.drawable.ic_star_black_48dp);
+            star3.setImageResource(R.drawable.ic_star_empty_48dp);
+            currentRate = 2;
+        });
+
+        star3.setOnClickListener(v -> {
+            star1.setImageResource(R.drawable.ic_star_black_48dp);
+            star2.setImageResource(R.drawable.ic_star_black_48dp);
+            star3.setImageResource(R.drawable.ic_star_black_48dp);
+            currentRate = 3;
+        });
+
+        //BUTTON
+        rateDialog.setPositiveButton(getString(R.string.message_save), (dialog, which) -> {
+            saveRating();
+            getRating();
+        });
+        rateDialog.setNegativeButton(getString(R.string.message_cancel), (dialog, which) -> { });
+
+        //DISPLAY DIALOG
+        rateDialog.create().show();
     }
 
     @OnClick(R.id.website_view)
@@ -240,12 +294,6 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                         else { webSite = null; }
 
                         restaurantUrl = response.getResult().getUrl();
-
-                        if (response.getResult().getRating() != null){
-                            rate = response.getResult().getRating().intValue();
-                        }
-
-                        displayStars(rate);
                     }
 
                     @Override public void onError(Throwable e) { Log.e("TAG","On Error"+Log.getStackTraceString(e)); }
@@ -268,40 +316,80 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
     // UTILS
     // -------------------
 
-    private void displayStars (int rate){
-        switch(rate) {
-            case 0:
-                oneStar.setVisibility(View.INVISIBLE);
-                twoStars.setVisibility(View.INVISIBLE);
-                threeStars.setVisibility(View.INVISIBLE);
-                fourStars.setVisibility(View.INVISIBLE);
-                fiveStars.setVisibility(View.INVISIBLE);
-                break;
-            case 1:
-                twoStars.setVisibility(View.INVISIBLE);
-                threeStars.setVisibility(View.INVISIBLE);
-                fourStars.setVisibility(View.INVISIBLE);
-                fiveStars.setVisibility(View.INVISIBLE);
-                break;
-            case 2:
-                threeStars.setVisibility(View.INVISIBLE);
-                fourStars.setVisibility(View.INVISIBLE);
-                fiveStars.setVisibility(View.INVISIBLE);
-                break;
-            case 3:
-                fourStars.setVisibility(View.INVISIBLE);
-                fiveStars.setVisibility(View.INVISIBLE);
-                break;
-            case 4:
-                fiveStars.setVisibility(View.INVISIBLE);
-                break;
+    private void getRating(){
+
+        List<Long> listRate = new ArrayList();
+
+        UserHelper.getUsersCollection()
+                .get().addOnCompleteListener(task -> {
+
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+
+                    UserHelper.getUsersCollection()
+                            .document(document.getData().get("uid").toString())
+                            .collection("rate")
+                            .document(placeId)
+                            .get().addOnCompleteListener(task1 -> {
+
+                        if (task1.isSuccessful()) {
+                            DocumentSnapshot document1 = task1.getResult();
+                            if (document1.exists()) {
+                                listRate.add((Long) document1.getData().get("rate"));
+                                averageRate = UtilsFunction.getAverage(listRate);
+                                displayStars(averageRate, oneStar, twoStars, threeStars);
+                            } else {
+                                //System.out.println("No such document");
+                            }
+                        } else {
+                            System.out.println("get failed with " + task1.getException());
+                        }
+                    });
+                }
+            } else {
+                System.out.println("Error getting documents: " + task.getException());
+            }
+        });
+
+    }
+
+    private void saveRating(){
+        System.out.println("save rating");
+        if (this.getCurrentUser() != null) {
+
+            UserHelper.addRate(placeId, currentRate, this.getCurrentUser().getUid()).addOnFailureListener(this.onFailureListener());
+        }
+    }
+
+    private void displayStars (float rate, ImageView oneStar, ImageView twoStars, ImageView threeStars){
+        if (rate < 0.5){
+            oneStar.setImageResource(R.drawable.ic_star_empty_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
+        }
+
+        if (rate > 0.5){
+            oneStar.setImageResource(R.drawable.ic_star_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
+        }
+
+        if (rate > 1.5){
+            oneStar.setImageResource(R.drawable.ic_star_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
+        }
+
+        if (rate > 2.5){
+            oneStar.setImageResource(R.drawable.ic_star_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_48dp);
         }
     }
 
     private void startNotificationAtMidday(){
         AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
-        Bundle bundle = new Bundle();
 
         SharedPref.write(SharedPref.notificationRestaurantName, nameOfRestaurant);
         SharedPref.write(SharedPref.notificationRestaurantAddress, addressOfRestaurant);
@@ -309,11 +397,10 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,12);
-        calendar.set(Calendar.MINUTE, 00);
+        calendar.set(Calendar.HOUR_OF_DAY,SharedPref.read(SharedPref.notificationHour, 12));
+        calendar.set(Calendar.MINUTE, SharedPref.read(SharedPref.notificationMin, 0));
 
-        //alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, pendingIntent);
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     @Override

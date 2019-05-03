@@ -96,12 +96,25 @@ public class LoginActivity extends BaseActivity {
                     RC_SIGN_IN);
     }
 
+    @OnClick(R.id.main_activity_button_login_twitter)
+    public void onClickLoginTwitterButton() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setTheme(R.style.LoginTheme)
+                        .setAvailableProviders(
+                                Arrays.asList(new AuthUI.IdpConfig.TwitterBuilder().build())) // SUPPORT GOOGLE
+                        .setIsSmartLockEnabled(false, true)
+                        .setLogo(R.drawable.ic_logo_auth)
+                        .build(),
+                RC_SIGN_IN);
+    }
+
     // --------------------
     // REST REQUEST
     // --------------------
 
     private void createUserInFirestore(){
-
         UserHelper.getUsersCollection().document(this.getCurrentUser().getUid())
                 .get().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
@@ -109,11 +122,11 @@ public class LoginActivity extends BaseActivity {
                 if (document.exists()){
                     System.out.println(getString(R.string.error_account_already_create));
                 } else {
-                    String dayRestaurant = SharedPref.read(SharedPref.dayRestaurant, "none");
+                    String dayRestaurant = "none";
 
                     if (this.getCurrentUser() != null) {
 
-                        String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : "https://firebasestorage.googleapis.com/v0/b/go4lunch-236014.appspot.com/o/default_profile_picture.png?alt=media&token=c36ffabe-048d-451f-a30b-279061b15178";
+                        String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : "https://firebasestorage.googleapis.com/v0/b/go4lunch-236014.appspot.com/o/Capture%20d%E2%80%99e%CC%81cran%202019-05-03%20a%CC%80%2015.05.59.png?alt=media&token=f128a5b9-a5e7-4ed9-9884-514ccf83fb83";
                         String username = this.getCurrentUser().getDisplayName();
                         String uid = this.getCurrentUser().getUid();
                         String email = this.getCurrentUser().getEmail();

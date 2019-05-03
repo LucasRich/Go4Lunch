@@ -59,15 +59,8 @@ public class WorkmatesViewViewHolder extends RecyclerView.ViewHolder {
                                 " (" + response.getResult().getTypes().get(0) + ")");
                     }
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
+                    @Override public void onError(Throwable e) { }
+                    @Override public void onComplete() { }
                 });
     }
 

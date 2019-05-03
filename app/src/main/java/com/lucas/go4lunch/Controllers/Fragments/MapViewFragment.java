@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.core.content.ContextCompat;
@@ -26,6 +27,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
 import com.lucas.go4lunch.Controllers.Activities.MainActivity;
 import com.lucas.go4lunch.Models.PlaceDetails.PlaceDetails;
@@ -33,6 +38,8 @@ import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.Constant;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
+import com.lucas.go4lunch.Utils.UserHelper;
+import com.lucas.go4lunch.Utils.UtilsFunction;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -176,10 +183,31 @@ public class MapViewFragment extends Fragment
                     public void onNext(PlaceDetails response) {
                         Log.e("TAG","On Next");
 
-                        mMarker = mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(response.getResult().getGeometry().getLocation().getLat(),
-                                        response.getResult().getGeometry().getLocation().getLng()))
-                                .title(response.getResult().getPlaceId()));
+                        UserHelper.getUsersCollection()
+                                .get().addOnCompleteListener(task -> {
+                            boolean peopleEatToRestaurant = false;
+
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    if (document.getData().get("dayRestaurant").equals(response.getResult().getPlaceId())){ peopleEatToRestaurant = true; }
+                                }
+
+                                if (peopleEatToRestaurant){
+                                    mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(response.getResult().getGeometry().getLocation().getLat(), response.getResult().getGeometry().getLocation().getLng()))
+                                            .title(response.getResult().getPlaceId()))
+                                            .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_green));
+                                } else {
+                                    mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(response.getResult().getGeometry().getLocation().getLat(), response.getResult().getGeometry().getLocation().getLng()))
+                                            .title(response.getResult().getPlaceId()))
+                                            .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_orange));
+                                }
+
+                            } else {
+                                System.out.println("Error getting documents: " + task.getException());
+                            }
+                        });
                     }
 
                     @Override public void onError(Throwable e) {  }
@@ -204,6 +232,9 @@ public class MapViewFragment extends Fragment
         myIntent.putExtras(bundle);
         this.startActivity(myIntent);
     }
+
+    protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
+
 
     // -------------------
     // LIFE CYCLE

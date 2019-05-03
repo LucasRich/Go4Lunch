@@ -12,7 +12,7 @@
         android:layout_height="20dp"
         android:layout_below="@+id/item_img"
         android:layout_toLeftOf="@+id/item_2_stars"
-        android:src="@drawable/ic_star_black_48dp"
+        android:src="@drawable/ic_star_empty_48dp"
         android:tint="@color/yelloh"/>
 
     <ImageView
@@ -21,7 +21,7 @@
         android:layout_height="20dp"
         android:layout_toLeftOf="@+id/item_3_stars"
         android:layout_below="@+id/item_img"
-        android:src="@drawable/ic_star_black_48dp"
+        android:src="@drawable/ic_star_empty_48dp"
         android:tint="@color/yelloh"/>
 
     <ImageView
@@ -30,26 +30,6 @@
         android:layout_height="20dp"
         android:layout_toLeftOf="@+id/item_4_stars"
         android:layout_below="@+id/item_img"
-        android:src="@drawable/ic_star_black_48dp"
+        android:src="@drawable/ic_star_empty_48dp"
         android:tint="@color/yelloh"/>
-
-    <ImageView
-        android:id="@+id/item_4_stars"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_toLeftOf="@+id/item_5_stars"
-        android:layout_below="@+id/item_img"
-        android:src="@drawable/ic_star_black_48dp"
-        android:tint="@color/yelloh"/>
-
-    <ImageView
-        android:id="@+id/item_5_stars"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/item_img"
-
-        android:src="@drawable/ic_star_black_48dp"
-        android:tint="@color/yelloh"/>
-
 </LinearLayout>

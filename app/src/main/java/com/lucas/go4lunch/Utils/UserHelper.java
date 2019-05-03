@@ -7,6 +7,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.lucas.go4lunch.Models.ProfileFile.Rate;
 import com.lucas.go4lunch.Models.ProfileFile.User;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,11 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(uid).set(userToCreate);
     }
 
+    public static Task<Void> addRate(String restaurantId, int rate, String uid) {
+        Rate rateToCreate = new Rate(rate);
+        return UserHelper.getUsersCollection().document(uid).collection("rate").document(restaurantId).set(rateToCreate);
+    }
+
     // --- GET ---
 
     public static Task<DocumentSnapshot> getUser(String uid){
@@ -43,6 +49,12 @@ public class UserHelper {
     public static Query getAllUserRestaurant(String restaurandId){
         return UserHelper.getUsersCollection()
                 .whereEqualTo("dayRestaurant", restaurandId)
+                .limit(50);
+    }
+
+    public static Query getRating(String uid, String restaurandId){
+        return UserHelper.getUsersCollection().document(uid).collection(restaurandId)
+                .whereEqualTo("rate", restaurandId)
                 .limit(50);
     }
 

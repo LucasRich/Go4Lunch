@@ -35,8 +35,11 @@
     <string name="language_already_selected">Langue déjà sélectionnée!</string>
     <string name="french">Français</string>
     <string name="english">Anglais</string>
+    <string name="select_language">Sélectionne la langue</string>
     <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
     <string name="toast_title_no_image_chosen">Aucune image choisie&#8230;</string>
+    <string name="change_radius">Changer la distance du rayon (m)</string>
+    <string name="select_hour_notification">Sélectionnez l\'heure de notification (AM : Matin, PM : Après-midi)</string>
 
     <!-- DISPLAY RESTAURANT ACTIVITY -->
     <string name="call">APPELER</string>
@@ -52,8 +55,8 @@
 
     <!-- LIST VIEW FRAGMENT -->
     <string name="open_now">Ouvert</string>
-    <string name="open_until">Ouvre à </string>
     <string name="close">Fermé</string>
+    <string name="opening_hours">Heures d\'ouverture -</string>
 
     <!-- DIALOG -->
     <string name="message_cancel">Annulé</string>
@@ -92,5 +95,9 @@
     <!-- FACEBOOK PURPOSE -->
     <string name="facebook_application_id" translatable="false">397492547469759</string>
     <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb397492547469759</string>
+
+    <!-- TWITTER PURPOSE -->
+    <string name="twitter_consumer_key" translatable="false">pk4Nbn7ytW7q6l7hwadHaahNH</string>
+    <string name="twitter_consumer_secret" translatable="false">4wdmJt2zFP4neRXjzs93BWe7UfAIHhCesA7bg4DwEMPUkVPTjB</string>
 
 </resources>

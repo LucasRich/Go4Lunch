@@ -19,6 +19,8 @@ public class SharedPref {
     public static String dayRestaurant = "dayRestaurant";
     public static String notificationRestaurantName = "notificationRestaurantName";
     public static String notificationRestaurantAddress = "notificationRestaurantAddress";
+    public static String notificationHour = "notificationHour";
+    public static String notificationMin = "notificationMin";
 
     private SharedPref() { }
 

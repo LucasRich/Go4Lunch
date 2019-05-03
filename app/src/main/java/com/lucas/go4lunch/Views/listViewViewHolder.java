@@ -1,5 +1,6 @@
 package com.lucas.go4lunch.Views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lucas.go4lunch.BuildConfig;
@@ -17,6 +19,7 @@ import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.PlaceStreams;
 import com.lucas.go4lunch.Utils.SharedPref;
 import com.lucas.go4lunch.Utils.UserHelper;
+import com.lucas.go4lunch.Utils.UtilsFunction;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -36,8 +39,6 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.item_distance) TextView restaurantDistance;
     @BindView(R.id.item_info) TextView restaurantInfo;
     @BindView(R.id.item_open_info) TextView restaurantOpenInfo;
-    @BindView(R.id.item_5_stars) ImageView fiveStars;
-    @BindView(R.id.item_4_stars) ImageView fourStars;
     @BindView(R.id.item_3_stars) ImageView threeStars;
     @BindView(R.id.item_2_stars) ImageView twoStars;
     @BindView(R.id.item_1_star) ImageView oneStar;
@@ -45,13 +46,11 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.item_nb_workmates_img) ImageView nbWorkmatesImg;
 
     private Disposable disposable;
-    private int rate = 0;
     private Context context;
     private List<String> weekdayOpen = new ArrayList<>();
-
     private Location currentLocation = new Location("");
     private Location restaurantLocation = new Location("");
-    private List<String> listUser = new ArrayList<>();
+    private float averageRate = 0;
 
     // -------------------
     // INIT
@@ -64,7 +63,6 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void displayRestaurant(Result response){
-        //init
         nbWorkmates.setVisibility(itemView.INVISIBLE);
         nbWorkmatesImg.setVisibility(itemView.INVISIBLE);
 
@@ -83,6 +81,7 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
                         Log.e("TAG","On Next");
 
                         displayRestaurantPeople(placeId);
+                        getRating(placeId);
 
                         restaurantName.setText(response.getResult().getName());
                         restaurantInfo.setText(response.getResult().getTypes().get(0) + " - " + response.getResult().getVicinity());
@@ -100,20 +99,8 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
                         if(response.getResult().getOpeningHours() != null){
                             weekdayOpen.addAll(response.getResult().getOpeningHours().getWeekdayText());
                             displayOpeningHours(weekdayOpen, response);
-
-                            /*if (response.getResult().getOpeningHours().getOpenNow()){
-                                restaurantOpenInfo.setText("Open now");
-                            }
-                            else {
-                                restaurantOpenInfo.setText("Close now");
-                            }*/
                         }
 
-                        if (response.getResult().getRating() != null){
-                            rate = response.getResult().getRating().intValue();
-                        }
-
-                        displayStars(rate);
                         displayDistance(response.getResult().getGeometry().getLocation().getLat(),
                                         response.getResult().getGeometry().getLocation().getLng());
 
@@ -157,33 +144,66 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    private void displayStars (int rate){
-        switch(rate) {
-            case 0:
-                oneStar.setVisibility(itemView.INVISIBLE);
-                twoStars.setVisibility(itemView.INVISIBLE);
-                threeStars.setVisibility(itemView.INVISIBLE);
-                fourStars.setVisibility(itemView.INVISIBLE);
-                fiveStars.setVisibility(itemView.INVISIBLE);
-                break;
-            case 1:
-                twoStars.setVisibility(itemView.INVISIBLE);
-                threeStars.setVisibility(itemView.INVISIBLE);
-                fourStars.setVisibility(itemView.INVISIBLE);
-                fiveStars.setVisibility(itemView.INVISIBLE);
-                break;
-            case 2:
-                threeStars.setVisibility(itemView.INVISIBLE);
-                fourStars.setVisibility(itemView.INVISIBLE);
-                fiveStars.setVisibility(itemView.INVISIBLE);
-                break;
-            case 3:
-                fourStars.setVisibility(itemView.INVISIBLE);
-                fiveStars.setVisibility(itemView.INVISIBLE);
-                break;
-            case 4:
-                fiveStars.setVisibility(itemView.INVISIBLE);
-                break;
+    private void getRating(String placeId){
+
+        List<Long> listRate = new ArrayList();
+
+        UserHelper.getUsersCollection()
+                .get().addOnCompleteListener(task -> {
+
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+
+                    UserHelper.getUsersCollection()
+                            .document(document.getData().get("uid").toString())
+                            .collection("rate")
+                            .document(placeId)
+                            .get().addOnCompleteListener(task1 -> {
+
+                        if (task1.isSuccessful()) {
+                            DocumentSnapshot document1 = task1.getResult();
+                            if (document1.exists()) {
+                                listRate.add((Long) document1.getData().get("rate"));
+                                averageRate = UtilsFunction.getAverage(listRate);
+                                displayStars(averageRate);
+                            } else {
+                                if (listRate.size() == 0){ displayStars(0); }
+                            }
+                        } else {
+                            System.out.println("get failed with " + task1.getException());
+                        }
+                    });
+                }
+            } else {
+                System.out.println("Error getting documents: " + task.getException());
+            }
+        });
+
+    }
+
+    private void displayStars (float rate){
+        if (rate < 0.5){
+            oneStar.setImageResource(R.drawable.ic_star_empty_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
+        }
+
+        if (rate > 0.5){
+            oneStar.setImageResource(R.drawable.ic_star_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
+        }
+
+        if (rate > 1.5){
+            oneStar.setImageResource(R.drawable.ic_star_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
+        }
+
+        if (rate > 2.5){
+            oneStar.setImageResource(R.drawable.ic_star_48dp);
+            twoStars.setImageResource(R.drawable.ic_star_48dp);
+            threeStars.setImageResource(R.drawable.ic_star_48dp);
         }
     }
 
@@ -195,14 +215,8 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
         restaurantLocation.setLongitude(longitude);
 
         int distance = Math.round(currentLocation.distanceTo(restaurantLocation));
-        DecimalFormat myFormatter = new DecimalFormat("#,###");
 
-        if (distance < 1000){
-            restaurantDistance.setText(distance + "m");
-        }
-        else {
-            restaurantDistance.setText(myFormatter.format(distance) + "km");
-        }
+        restaurantDistance.setText(distance + "m");
     }
 
     private void displayOpeningHours (List weekdayOpen, PlaceDetails response) {
@@ -239,7 +253,10 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
         }
         else {
             try {
-                restaurantOpenInfo.setText(itemView.getResources().getString(R.string.open_until)+ " " + response.getResult().getOpeningHours().getPeriods().get(dayNumber).getOpen().getTime());
+                String openInfo = weekdayOpen.get(dayNumber).toString();
+                String[] output = openInfo.split("\\:", 2);
+
+                restaurantOpenInfo.setText(itemView.getResources().getString(R.string.opening_hours)+ " " + output[1]);
             }
             catch (Exception e){ restaurantOpenInfo.setText(itemView.getResources().getString(R.string.close)); }
         }

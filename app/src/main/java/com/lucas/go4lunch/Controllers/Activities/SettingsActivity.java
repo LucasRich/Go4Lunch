@@ -10,9 +10,13 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,11 +31,13 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -43,6 +49,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.lucas.go4lunch.Models.ProfileFile.User;
 import com.lucas.go4lunch.R;
+import com.lucas.go4lunch.Utils.AlarmReceiver;
 import com.lucas.go4lunch.Utils.SharedPref;
 import com.lucas.go4lunch.Utils.UserHelper;
 
@@ -54,14 +61,19 @@ public class SettingsActivity extends BaseActivity {
     @BindView(R.id.switch_notification) Switch switchNotification;
     @BindView(R.id.settings_img_profile) ImageView profileImg;
     @BindView(R.id.settings_name_user) TextView nameUser;
+    @BindView(R.id.container) RelativeLayout container;
+    @BindView(R.id.progressBar) RelativeLayout progressBar;
 
     private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int RC_IMAGE_PERMS = 100;
     private Uri uriImageSelected;
 
     private static final int RC_CHOOSE_PHOTO = 200;
-
+    private Calendar calendar;
     public final static int radius = SharedPref.read(SharedPref.radius, 300);
+
+    public int valueHour;
+    public int valueMin;
 
     Locale mLocale;
 
@@ -71,6 +83,7 @@ public class SettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         SharedPref.init(this);
 
+        progressBar.setVisibility(View.INVISIBLE);
         this.displayUserInfo();
         this.configureToolbar();
     }
@@ -141,8 +154,6 @@ public class SettingsActivity extends BaseActivity {
         this.choosePictureFromPhone();
     }
 
-
-
     @OnClick(R.id.deleteAccount_view)
     public void onCLickDeleteAccount(){
         new AlertDialog.Builder(this)
@@ -156,12 +167,41 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @OnClick(R.id.switch_notification)
-    public void onClickNotification(){
+    public void onClickNotificationSwitch(){
         if (switchNotification.isChecked()){
             SharedPref.write(SharedPref.getNotificationActived, true);
         } else {
             SharedPref.write(SharedPref.getNotificationActived, false);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @OnClick(R.id.notification_view)
+    public void onClickNotification(){
+        //CREATION
+        AlertDialog.Builder numberPickerDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.select_hour_notification, (ViewGroup)findViewById(R.id.numberPickerView));
+        numberPickerDialog.setView(layout);
+        numberPickerDialog.setTitle(getString(R.string.select_hour_notification));
+
+        //DECLARATION
+        TimePicker timePicker = (TimePicker) layout.findViewById(R.id.timePickerNotification);
+
+        //INIT INPUT
+        timePicker.setHour(SharedPref.read(SharedPref.notificationHour, 12));
+        timePicker.setMinute(SharedPref.read(SharedPref.notificationMin, 0));
+
+        //BUTTON
+        numberPickerDialog.setPositiveButton(getString(R.string.message_save), (dialog, which) -> {
+            SharedPref.write(SharedPref.notificationHour, timePicker.getHour());
+            SharedPref.write(SharedPref.notificationMin, timePicker.getMinute());
+            startNotificationAtMidday();
+        });
+        numberPickerDialog.setNegativeButton(getString(R.string.message_cancel), (dialog, which) -> { });
+
+        //DISPLAY DIALOG
+        numberPickerDialog.create().show();
     }
 
     @OnClick(R.id.changeDistanceRadius_view)
@@ -171,7 +211,7 @@ public class SettingsActivity extends BaseActivity {
         LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.seek_bar_radius, (ViewGroup)findViewById(R.id.seekBarLayout));
         seekBarDialog.setView(layout);
-        seekBarDialog.setTitle("Change radius distance (m)");
+        seekBarDialog.setTitle(getString(R.string.change_radius));
 
         //DECLARATION
         TextView seekBarSettingTxt = (TextView)layout.findViewById(R.id.seekBarSettingTxt);
@@ -196,11 +236,11 @@ public class SettingsActivity extends BaseActivity {
         seekBarSetting.setOnSeekBarChangeListener(seekBarChangeListener);
 
         //BUTTON
-        seekBarDialog.setPositiveButton("Save", (dialog, which) -> {
+        seekBarDialog.setPositiveButton(getString(R.string.message_save), (dialog, which) -> {
             SharedPref.write(SharedPref.radius, getGoodRadiusDistance(seekBarSetting.getProgress()));
             restartMainActivity();
         });
-        seekBarDialog.setNegativeButton("Cancel", (dialog, which) -> { });
+        seekBarDialog.setNegativeButton(getString(R.string.message_cancel), (dialog, which) -> { });
 
         //DISPLAY DIALOG
         seekBarDialog.create().show();
@@ -213,7 +253,7 @@ public class SettingsActivity extends BaseActivity {
         LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.select_language, (ViewGroup)findViewById(R.id.selectLanguageLayout));
         languageDialog.setView(layout)
-                      .setTitle("Select language");
+                      .setTitle(getString(R.string.select_language));
 
         //DECLARATION
         RelativeLayout frFlagLayout = (RelativeLayout)layout.findViewById(R.id.fr_flag_layout);
@@ -221,13 +261,11 @@ public class SettingsActivity extends BaseActivity {
 
         //BUTTON VIEW
         frFlagLayout.setOnClickListener(v -> {
-            System.out.println("French");
             setLocale("fr");
             SharedPref.write(SharedPref.currentLanguage, "fr");
         });
 
         gbFlagLayout.setOnClickListener(v -> {
-            System.out.println("English");
             setLocale("en");
             SharedPref.write(SharedPref.currentLanguage, "en");
         });
@@ -311,11 +349,8 @@ public class SettingsActivity extends BaseActivity {
     private void waitUploadPicture() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-        AlertDialog.Builder loadingDialog = new AlertDialog.Builder(this);
-        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.loading, (ViewGroup)findViewById(R.id.progressBar));
-        loadingDialog.setView(layout);
-        loadingDialog.create().show();
+        container.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     private void displayUserInfo(){
@@ -363,6 +398,19 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
+    private void startNotificationAtMidday(){
+        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.set(java.util.Calendar.HOUR_OF_DAY,SharedPref.read(SharedPref.notificationHour, 12));
+        calendar.set(java.util.Calendar.MINUTE, SharedPref.read(SharedPref.notificationMin, 0));
+
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
     public void restartMainActivity() {
         Intent myIntent = new Intent(this, MainActivity.class);
         this.startActivity(myIntent);
@@ -378,7 +426,7 @@ public class SettingsActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (SharedPref.read(SharedPref.getNotificationActived, false)){
+        if (SharedPref.read(SharedPref.getNotificationActived, true)){
             switchNotification.setChecked(true);
         }
     }

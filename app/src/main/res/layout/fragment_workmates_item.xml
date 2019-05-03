@@ -17,7 +17,8 @@
             app:srcCompat="@drawable/ic_anon_user_48dp"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp"
+            android:scaleType="fitCenter"/>
 
         <TextView
             android:id="@+id/workmates_item_desc"

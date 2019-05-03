@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.lucas.go4lunch.Controllers.Activities.DisplayRestaurantInfo;
@@ -60,10 +62,10 @@ public class WorkmatesFragment extends Fragment implements WorkmatesViewAdapter.
     }
 
     private FirestoreRecyclerOptions<User> generateOptionsForAdapter(Query query){
-        return new FirestoreRecyclerOptions.Builder<User>()
-                .setQuery(query, User.class)
-                .setLifecycleOwner(this)
-                .build();
+            return new FirestoreRecyclerOptions.Builder<User>()
+                    .setQuery(query, User.class)
+                    .setLifecycleOwner(this)
+                    .build();
     }
 
     private void configureOnClickRecyclerView(){
