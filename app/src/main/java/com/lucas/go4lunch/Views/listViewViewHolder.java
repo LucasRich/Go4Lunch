@@ -165,9 +165,9 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
                             if (document1.exists()) {
                                 listRate.add((Long) document1.getData().get("rate"));
                                 averageRate = UtilsFunction.getAverage(listRate);
-                                displayStars(averageRate);
+                                UtilsFunction.displayStars(averageRate, oneStar, twoStars, threeStars);
                             } else {
-                                if (listRate.size() == 0){ displayStars(0); }
+                                if (listRate.size() == 0){ UtilsFunction.displayStars(0, oneStar, twoStars, threeStars); }
                             }
                         } else {
                             System.out.println("get failed with " + task1.getException());
@@ -179,32 +179,6 @@ public class listViewViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-    }
-
-    private void displayStars (float rate){
-        if (rate < 0.5){
-            oneStar.setImageResource(R.drawable.ic_star_empty_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
-        }
-
-        if (rate > 0.5){
-            oneStar.setImageResource(R.drawable.ic_star_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
-        }
-
-        if (rate > 1.5){
-            oneStar.setImageResource(R.drawable.ic_star_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
-        }
-
-        if (rate > 2.5){
-            oneStar.setImageResource(R.drawable.ic_star_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_48dp);
-        }
     }
 
     private void displayDistance (double latitude, double longitude){

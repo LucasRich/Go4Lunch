@@ -256,7 +256,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                         .apply(RequestOptions.circleCropTransform())
                                         .into(menuImg);
                             } else {
-                                System.out.println("No such document");
+                                //System.out.println("No such document");
                             }
                         } else {
                             System.out.println("get failed with " + task.getException());

@@ -16,7 +16,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="30dp"
         android:layout_below="@+id/seekBarSettingTxt"
-        android:max="30"
+        android:max="50"
         android:progress="300"
         android:indeterminate="false" />
 

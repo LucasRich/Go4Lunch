@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
@@ -128,23 +129,28 @@ public class MapViewFragment extends Fragment
             EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_location_access), LOCATION_PERMS, PERMS);
             return;
         }
-        Location location = mLocationManager.getLastKnownLocation(provider);
-        currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
-        SharedPref.write(SharedPref.currentPositionLat, location.getLatitude() + "");
-        SharedPref.write(SharedPref.currentPositionLng, location.getLongitude() + "");
+        Location location = mLocationManager.getLastKnownLocation(provider);
+
+        if (location != null){
+            currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+
+            SharedPref.write(SharedPref.currentPositionLat, location.getLatitude() + "");
+            SharedPref.write(SharedPref.currentPositionLng, location.getLongitude() + "");
+        }
     }
 
     private void getCurrentLocationAndZoomOn() {
-        getCurrentLocation();
-
         try {
+            getCurrentLocation();
+
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(currentPosition)
                     .zoom(17)
                     .build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        } catch (Exception e) { }
+        } catch (Exception ignored){}
+
     }
 
     @Override
@@ -232,9 +238,6 @@ public class MapViewFragment extends Fragment
         myIntent.putExtras(bundle);
         this.startActivity(myIntent);
     }
-
-    protected FirebaseUser getCurrentUser(){ return FirebaseAuth.getInstance().getCurrentUser(); }
-
 
     // -------------------
     // LIFE CYCLE

@@ -20,10 +20,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.ButterKnife;
 
-/**
- * Created by Philippe on 12/01/2018.
- */
-
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected static final int SIGN_OUT_TASK = 10;

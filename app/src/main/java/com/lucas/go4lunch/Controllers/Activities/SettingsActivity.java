@@ -52,6 +52,7 @@ import com.lucas.go4lunch.R;
 import com.lucas.go4lunch.Utils.AlarmReceiver;
 import com.lucas.go4lunch.Utils.SharedPref;
 import com.lucas.go4lunch.Utils.UserHelper;
+import com.lucas.go4lunch.Utils.UtilsFunction;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -139,7 +140,7 @@ public class SettingsActivity extends BaseActivity {
         //BUTTON
         changeUserNameDialog.setPositiveButton(getString(R.string.message_save), (dialog, which) -> {
             UserHelper.updateUsername(userNameText.getText().toString(), this.getCurrentUser().getUid());
-            restartMainActivity();
+            UtilsFunction.restartMainActivity(this);
         });
         changeUserNameDialog.setNegativeButton(getString(R.string.message_cancel), (dialog, which) -> { });
 
@@ -238,7 +239,7 @@ public class SettingsActivity extends BaseActivity {
         //BUTTON
         seekBarDialog.setPositiveButton(getString(R.string.message_save), (dialog, which) -> {
             SharedPref.write(SharedPref.radius, getGoodRadiusDistance(seekBarSetting.getProgress()));
-            restartMainActivity();
+            UtilsFunction.restartMainActivity(this);
         });
         seekBarDialog.setNegativeButton(getString(R.string.message_cancel), (dialog, which) -> { });
 
@@ -276,17 +277,14 @@ public class SettingsActivity extends BaseActivity {
 
     @OnClick(R.id.updateNote_view)
     public void onClickUpdateNote(){
-        uploadPhotoInFirebase(this.getCurrentUser().getUid());
     }
 
     @OnClick(R.id.support_view)
     public void onCLickSupport(){
-        System.out.println("support");
     }
 
     @OnClick(R.id.about_view)
     public void onClickAbout(){
-        System.out.println("About");
     }
 
     // -------------------
@@ -340,7 +338,7 @@ public class SettingsActivity extends BaseActivity {
                 .addOnSuccessListener(this, taskSnapshot -> {
                     mImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         UserHelper.updateUrlPicture(uri.toString(), userId);
-                        restartMainActivity();
+                        UtilsFunction.restartMainActivity(this);
                     });
                 })
                 .addOnFailureListener(this.onFailureListener());
@@ -411,12 +409,7 @@ public class SettingsActivity extends BaseActivity {
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    public void restartMainActivity() {
-        Intent myIntent = new Intent(this, MainActivity.class);
-        this.startActivity(myIntent);
-    }
-
-    public static int getGoodRadiusDistance (int radius){ return radius*= 100; }
+    public static int getGoodRadiusDistance (int radius){ return radius *= 100; }
 
     // -------------------
     // LIFE CYCLE

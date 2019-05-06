@@ -46,15 +46,9 @@ public class UserHelper {
                 .limit(50);
     }
 
-    public static Query getAllUserRestaurant(String restaurandId){
+    public static Query getAllUserRestaurant(String restaurantId){
         return UserHelper.getUsersCollection()
-                .whereEqualTo("dayRestaurant", restaurandId)
-                .limit(50);
-    }
-
-    public static Query getRating(String uid, String restaurandId){
-        return UserHelper.getUsersCollection().document(uid).collection(restaurandId)
-                .whereEqualTo("rate", restaurandId)
+                .whereEqualTo("dayRestaurant", restaurantId)
                 .limit(50);
     }
 

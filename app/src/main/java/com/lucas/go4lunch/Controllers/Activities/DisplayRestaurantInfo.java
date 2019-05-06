@@ -87,7 +87,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
         this.initFab();
         this.executeHttpRequestWithRetrofit();
         this.configureRecyclerView();
-        this.getRating();
+        this.getRatingAndDisplay();
     }
 
     @Override
@@ -170,33 +170,27 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
         ImageView star3 = (ImageView)layout.findViewById(R.id.star3);
 
         //INIT INPUT
-        displayStars(averageRate, star1, star2, star3);
+        UtilsFunction.displayStars(averageRate, star1, star2, star3);
 
         star1.setOnClickListener(v -> {
-            star1.setImageResource(R.drawable.ic_star_black_48dp);
-            star2.setImageResource(R.drawable.ic_star_empty_48dp);
-            star3.setImageResource(R.drawable.ic_star_empty_48dp);
             currentRate = 1;
+            UtilsFunction.displayStars(currentRate, star1, star2, star3);
         });
 
         star2.setOnClickListener(v -> {
-            star1.setImageResource(R.drawable.ic_star_black_48dp);
-            star2.setImageResource(R.drawable.ic_star_black_48dp);
-            star3.setImageResource(R.drawable.ic_star_empty_48dp);
             currentRate = 2;
+            UtilsFunction.displayStars(currentRate, star1, star2, star3);
         });
 
         star3.setOnClickListener(v -> {
-            star1.setImageResource(R.drawable.ic_star_black_48dp);
-            star2.setImageResource(R.drawable.ic_star_black_48dp);
-            star3.setImageResource(R.drawable.ic_star_black_48dp);
             currentRate = 3;
+            UtilsFunction.displayStars(currentRate, star1, star2, star3);
         });
 
         //BUTTON
         rateDialog.setPositiveButton(getString(R.string.message_save), (dialog, which) -> {
             saveRating();
-            getRating();
+            getRatingAndDisplay();
         });
         rateDialog.setNegativeButton(getString(R.string.message_cancel), (dialog, which) -> { });
 
@@ -246,7 +240,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                         }
                     }
                 } else {
-                    System.out.println("No such document");
+                    //System.out.println("No such document");
                 }
             } else {
                 System.out.println("get failed with " + task.getException());
@@ -316,7 +310,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
     // UTILS
     // -------------------
 
-    private void getRating(){
+    private void getRatingAndDisplay(){
 
         List<Long> listRate = new ArrayList();
 
@@ -337,7 +331,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
                             if (document1.exists()) {
                                 listRate.add((Long) document1.getData().get("rate"));
                                 averageRate = UtilsFunction.getAverage(listRate);
-                                displayStars(averageRate, oneStar, twoStars, threeStars);
+                                UtilsFunction.displayStars(averageRate, oneStar, twoStars, threeStars);
                             } else {
                                 //System.out.println("No such document");
                             }
@@ -356,34 +350,7 @@ public class DisplayRestaurantInfo extends BaseActivity implements DisplayRestau
     private void saveRating(){
         System.out.println("save rating");
         if (this.getCurrentUser() != null) {
-
             UserHelper.addRate(placeId, currentRate, this.getCurrentUser().getUid()).addOnFailureListener(this.onFailureListener());
-        }
-    }
-
-    private void displayStars (float rate, ImageView oneStar, ImageView twoStars, ImageView threeStars){
-        if (rate < 0.5){
-            oneStar.setImageResource(R.drawable.ic_star_empty_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
-        }
-
-        if (rate > 0.5){
-            oneStar.setImageResource(R.drawable.ic_star_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_empty_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
-        }
-
-        if (rate > 1.5){
-            oneStar.setImageResource(R.drawable.ic_star_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_empty_48dp);
-        }
-
-        if (rate > 2.5){
-            oneStar.setImageResource(R.drawable.ic_star_48dp);
-            twoStars.setImageResource(R.drawable.ic_star_48dp);
-            threeStars.setImageResource(R.drawable.ic_star_48dp);
         }
     }
 
